@@ -616,7 +616,7 @@ function loadVue() {
 			player,
 			tmp,
 			options,
-			Decimal,
+			ExpantaNum,
 			format,
 			formatWhole,
 			formatTime,
