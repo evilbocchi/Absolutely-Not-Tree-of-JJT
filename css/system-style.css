@@ -1,8 +1,7 @@
 * {
 	transition-duration: 0.5s;
 	text-align: center;
-	font-family: "Inconsolata", monospace;
-	font-weight: bold;
+	font-family: "Comic Neue Angular", monospace;
 	table-align: center;
 	margin: auto;
 	-webkit-text-size-adjust: none;
@@ -40,6 +39,10 @@ td {
 	align-items: center;
 	max-width: 100%;
 	margin: 0 auto;
+}
+
+.upgRow > div {
+    margin: 0
 }
 
 .upgAlign {
@@ -249,3 +252,20 @@ button > * {
 	--background: transparent !important;
 }
 
+.overlay-head {
+    text-shadow: 2px 2px 2px black;
+}
+
+.overlayFooter {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    bottom: 0;
+    z-index: 999999999;
+    text-shadow: 2px 2px 2px black;
+
+}
+
+.formula {
+    color: rgb(190, 190, 190);
+}

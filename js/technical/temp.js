@@ -10,7 +10,7 @@ var activeFunctions = [
 	"sellOne", "sellAll", "pay", "actualCostFunction", "actualEffectFunction",
 	"effectDescription", "display", "fullDisplay", "effectDisplay", "rewardDisplay",
 	"tabFormat", "content",
-	"onComplete", "onPurchase", "onEnter", "onExit", "done",
+	"onComplete", "onPurchase", "onEnter", "onExit",
 	"getUnlocked", "getStyle", "getCanClick", "getTitle", "getDisplay"
 ]
 
@@ -25,10 +25,8 @@ var traversableClasses = []
 function setupTemp() {
 	tmp = {}
 	tmp.pointGen = {}
-	tmp.backgroundStyle = {}
 	tmp.displayThings = []
 	tmp.scrolled = 0
-	tmp.gameEnded = false
 	funcs = {}
 	
 	setupTempData(layers, tmp, funcs)
@@ -45,8 +43,8 @@ function setupTemp() {
 	}
 
 	tmp.other = {
-		lastPoints: player.points || decimalZero,
-		oomps: decimalZero,
+		lastPoints: player.points || $ZERO,
+		oomps: $ZERO,
 		screenWidth: 0,
 		screenHeight: 0,
     }
@@ -56,14 +54,12 @@ function setupTemp() {
 	temp = tmp
 }
 
-const boolNames = ["unlocked", "deactivated"]
-
 function setupTempData(layerData, tmpData, funcsData) {
 	for (item in layerData){
 		if (layerData[item] == null) {
 			tmpData[item] = null
 		}
-		else if (layerData[item] instanceof Decimal)
+		else if (layerData[item] instanceof OmegaNum)
 			tmpData[item] = layerData[item]
 		else if (Array.isArray(layerData[item])) {
 			tmpData[item] = []
@@ -81,16 +77,12 @@ function setupTempData(layerData, tmpData, funcsData) {
 		}
 		else if (isFunction(layerData[item]) && !activeFunctions.includes(item)){
 			funcsData[item] = layerData[item]
-			if (boolNames.includes(item))
-				tmpData[item] = false
-			else
-				tmpData[item] = decimalOne // The safest thing to put probably?
+			tmpData[item] = $ONE // The safest thing to put probably?
 		} else {
 			tmpData[item] = layerData[item]
 		}
 	}	
 }
-
 
 function updateTemp() {
 	if (tmp === undefined)
@@ -106,13 +98,9 @@ function updateTemp() {
 		tmp[layer].trueGlowColor = tmp[layer].glowColor
 		tmp[layer].notify = shouldNotify(layer)
 		tmp[layer].prestigeNotify = prestigeNotify(layer)
-		if (tmp[layer].passiveGeneration === true) tmp[layer].passiveGeneration = 1 // new Decimal(true) = decimalZero
-
 	}
 
 	tmp.pointGen = getPointGen()
-	tmp.backgroundStyle = readData(backgroundStyle)
-
 	tmp.displayThings = []
 	for (thing in displayThings){
 		let text = displayThings[thing]
@@ -121,20 +109,29 @@ function updateTemp() {
 	}
 }
 
-function updateTempData(layerData, tmpData, funcsData, useThis) {
+function updateTempData(layerData, tmpData, funcsData) {
+	
 	for (item in funcsData){
 		if (Array.isArray(layerData[item])) {
 			if (item !== "tabFormat" && item !== "content") // These are only updated when needed
-				updateTempData(layerData[item], tmpData[item], funcsData[item], useThis)
+				updateTempData(layerData[item], tmpData[item], funcsData[item])
 		}
 		else if ((!!layerData[item]) && (layerData[item].constructor === Object) || (typeof layerData[item] === "object") && traversableClasses.includes(layerData[item].constructor.name)){
-			updateTempData(layerData[item], tmpData[item], funcsData[item], useThis)
+			updateTempData(layerData[item], tmpData[item], funcsData[item])
 		}
 		else if (isFunction(layerData[item]) && !isFunction(tmpData[item])){
-			let value
-
-			if (useThis !== undefined) value = layerData[item].bind(useThis)()
-			else value = layerData[item]()
+			let value = layerData[item]()
+			if (value !== value || value === $NAN){
+				if (NaNalert === true || confirm ("Invalid value found in tmp, named '" + item + "'. Please let the creator of this mod know! Would you like to try to auto-fix the save and keep going?")){
+					NaNalert = true
+					value = (value !== value ? 0 : $ZERO)
+				}
+				else {
+					clearInterval(interval);
+					player.autosave = false;
+					NaNalert = true;
+				}
+			}
 			Vue.set(tmpData, item, value)
 		}
 	}	
@@ -172,8 +169,4 @@ function setupBuyables(layer) {
 			}
 		}
 	}
-}
-
-function checkDecimalNaN(x) {
-	return (x instanceof Decimal) && !x.eq(x)
 }

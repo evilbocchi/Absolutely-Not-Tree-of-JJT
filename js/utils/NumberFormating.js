@@ -1,82 +1,201 @@
-
 function exponentialFormat(num, precision, mantissa = true) {
-    let e = num.log10().floor()
-    let m = num.div(Decimal.pow(10, e))
-    if (m.toStringWithDecimalPlaces(precision) == 10) {
-        m = decimalOne
-        e = e.add(1)
-    }
-    e = (e.gte(1e9) ? format(e, 3) : (e.gte(10000) ? commaFormat(e, 0) : e.toStringWithDecimalPlaces(0)))
-    if (mantissa)
-        return m.toStringWithDecimalPlaces(precision) + "e" + e
-    else return "e" + e
+    return num.toString(precision)
 }
 
 function commaFormat(num, precision) {
     if (num === null || num === undefined) return "NaN"
-    if (num.mag < 0.001) return (0).toFixed(precision)
-    let init = num.toStringWithDecimalPlaces(precision)
-    let portions = init.split(".")
-    portions[0] = portions[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")
-    if (portions.length == 1) return portions[0]
-    return portions[0] + "." + portions[1]
+    if (num.array[0][1] < 0.001) return (0).toFixed(precision)
+    return num.toStringWithDecimalPlaces(Math.max(precision,2)).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")
 }
 
+function formatSmall(x, precision=2) { 
+    return format(x, precision, true)    
+}
 
 function regularFormat(num, precision) {
-    if (num === null || num === undefined) return "NaN"
-    if (num.mag < 0.0001) return (0).toFixed(precision)
-    if (num.mag < 0.1 && precision !==0) precision = Math.max(precision, 4)
-    return num.toStringWithDecimalPlaces(precision)
+    if (isNaN(num)) return "NaN"
+    if (num.array[0][1] < 0.001) return (0).toFixed(precision)
+    return num.toString(Math.max(precision,2))
 }
 
 function fixValue(x, y = 0) {
-    return x || new Decimal(y)
+    return x || new OmegaNum(y)
 }
 
 function sumValues(x) {
     x = Object.values(x)
-    if (!x[0]) return decimalZero
-    return x.reduce((a, b) => Decimal.add(a, b))
+    if (!x[0]) return new OmegaNum(0)
+    return x.reduce((a, b) => OmegaNum.add(a, b))
 }
 
-function format(decimal, precision = 2, small) {
-    small = small || modInfo.allowSmall
-    decimal = new Decimal(decimal)
-    if (isNaN(decimal.sign) || isNaN(decimal.layer) || isNaN(decimal.mag)) {
-        player.hasNaN = true;
-        return "NaN"
-    }
-    if (decimal.sign < 0) return "-" + format(decimal.neg(), precision, small)
-    if (decimal.mag == Number.POSITIVE_INFINITY) return "Infinity"
-    if (decimal.gte("eeee1000")) {
-        var slog = decimal.slog()
-        if (slog.gte(1e6)) return "F" + format(slog.floor())
-        else return Decimal.pow(10, slog.sub(slog.floor())).toStringWithDecimalPlaces(3) + "F" + commaFormat(slog.floor(), 0)
-    }
-    else if (decimal.gte("1e1000000")) return exponentialFormat(decimal, 0, false)
-    else if (decimal.gte("1e10000")) return exponentialFormat(decimal, 0)
-    else if (decimal.gte(1e9)) return exponentialFormat(decimal, precision)
-    else if (decimal.gte(1e3)) return commaFormat(decimal, 0)
-    else if (decimal.gte(0.0001) || !small) return regularFormat(decimal, precision)
-    else if (decimal.eq(0)) return (0).toFixed(precision)
+function egg(n) {
+    if(n == undefined) return 0
+    return n
+}
 
-    decimal = invertOOM(decimal)
-    let val = ""
-    if (decimal.lt("1e1000")){
-        val = exponentialFormat(decimal, precision)
-        return val.replace(/([^(?:e|F)]*)$/, '-$1')
-    }
-    else   
-        return format(decimal, precision) + "⁻¹"
+const suffixes = {
+	beginning: [ "K", "M", "B" ],
+	first: [ "U", "D", "T", "Qd", "Qn", "Sx", "Sp", "Oc", "No" ],
+	second: [ "De", "Vt", "Tg", "Qdg", "Qng", "Sxg", "Spg", "Ocg", "Nog" ],
+	third: [ "Ce", "Dce", "Tce", "Qdce", "Qnce", "Sxce", "Spce", "Occe", "Noce" ]
+}
 
+function getSuffix(exponent, hasBeginning = false) {
+    if (exponent < 3) {
+        return null;
+    } else {
+        let suffix = "";
+        if (exponent < Number.MAX_VALUE) {
+            exponent = Math.floor(exponent / 3) - 1;
+            if (hasBeginning === true && exponent < 3) {
+                suffix = suffixes.beginning[exponent];
+            } else {
+                let firstDivisee = exponent;
+                let secondDivisee;
+                let thirdDivisee;
+                if (exponent > 99) {
+                    thirdDivisee = Math.floor(exponent / 100);
+                    suffix = suffixes.third[thirdDivisee - 1];
+                    if (suffix === undefined) {
+                        return null;
+                    }
+                }
+                if (exponent > 9) {
+                    secondDivisee = Math.floor(exponent / 10);
+                    if (thirdDivisee !== undefined) {
+                        secondDivisee -= thirdDivisee * 10;
+                        firstDivisee -= thirdDivisee * 100;
+                    }
+                    firstDivisee -= secondDivisee * 10;
+                    const second = suffixes.second[secondDivisee - 1];
+                    if (second !== undefined) {
+                        suffix = second + suffix;
+                    }
+                    const first = suffixes.first[firstDivisee - 1];
+                    if (first !== undefined) {
+                        suffix = first + suffix;
+                    }
+                } else {
+                    suffix = suffixes.first[firstDivisee - 1];
+                }
+            }
+        }
+        return suffix;
+    }
+}
+
+function bigNumEnforceDP(mantissa, exponent, places = 2) {
+    const num = mantissa * Math.pow(10, exponent)
+    if (Number.isInteger(num))
+        return num
+    return num.toFixed(places)
+}
+
+function bigNumToSuffix(mantissa, exponent, places = 2) {
+    if (exponent < 3)
+        return bigNumEnforceDP(mantissa, exponent, places)
+    if (exponent > 3002) {
+        if (exponent >= 1e306)
+            return null;
+        const eExponent = Math.floor(Math.log10(Math.abs(exponent)))
+        return mantissa.toFixed(places) + "e" + bigNumToSuffix(exponent / Math.pow(10, eExponent), eExponent)
+    }
+    const suffix = getSuffix(exponent, true)
+    let label = bigNumEnforceDP(mantissa, exponent % 3)
+    if (suffix !== null)
+        label += suffix
+    return label
+}
+
+const MAX_FRACTIONAL = new OmegaNum("0.0001")
+const MAX_SUFFIX = new OmegaNum("1e3003")
+const MAX_SCIENTIFIC = new OmegaNum("ee3002");
+const MAX_E_CHAIN = new OmegaNum("eeeeee10");
+const MAX_ENT = new OmegaNum("10^^^10");
+
+function toEChain(decimal) {
+    const mult = decimal.array[0]
+    const exponent = Math.floor(Math.log10(Math.abs(mult)))
+    const mantissa = mult / Math.pow(10, exponent)
+    return "e".repeat(decimal.array[1]) + bigNumToSuffix(mantissa, exponent)
+}
+
+function format(decimal, precision = 2) {
+    decimal = new OmegaNum(decimal)
+
+    if (decimal.sign === -1)
+        return "-" + format(decimal.neg(), precision)
+    
+    if (decimal.eq($ZERO) || decimal === undefined || isNaN(decimal))
+        return "0"
+
+    if (decimal.lt(MAX_FRACTIONAL))
+        return format(decimal.rec(), precision) + "⁻¹"
+
+    
+    if (decimal.lt($ONE)) {
+        let fmt = decimal.toString()
+        fmt = fmt.substring(0,precision+2)
+        return fmt
+    }
+    if (decimal.lt(MAX_SCIENTIFIC)) {
+        const array = decimal.array
+        let mantissa, exponent
+        const mult = array[0]
+        if (array.length > 1) {
+            const exp = array[1]
+            if (exp === 1) {
+                mantissa = Math.pow(10, mult - Math.floor(mult))
+                exponent = Math.floor(mult)
+            }
+            else if (exp === 2 && mult <= 308) {
+                const expExp = Math.pow(10, mult)
+                mantissa = Math.pow(10, (expExp - Math.floor(expExp)))
+                exponent = Math.floor(expExp)
+            }
+            else {
+                return toEChain(decimal)
+            }
+        }
+        else {
+            exponent = Math.floor(Math.log10(Math.abs(mult)))
+            mantissa = mult / Math.pow(10, exponent)
+        }
+        return bigNumToSuffix(mantissa, exponent)
+    }
+    if (decimal.lt(MAX_E_CHAIN))
+        return toEChain(decimal)
+
+    const mult = decimal.array[0]
+    const mExponent = Math.floor(Math.log10(Math.abs(mult)))
+    const mMantissa = mult / Math.pow(10, mExponent)
+    const mSuffixed = bigNumToSuffix(mMantissa, mExponent)
+    const exp = decimal.array[1]
+    const eExponent = Math.floor(Math.log10(Math.abs(exp)))
+    const eMantissa = exp / Math.pow(10, eExponent)
+    const eSuffixed = bigNumToSuffix(eMantissa, eExponent, 0)
+    if (decimal.lt(MAX_ENT))
+        return "E(" + eSuffixed + ")" + mSuffixed
+
+    const length = decimal.array.length
+    if (length < 6) {
+        let hyperE = "E" + mSuffixed + "#" + eSuffixed
+        for (let i = 2; i < 6; i++) {
+            let number = decimal.array[i]
+            if (number === undefined)
+                break;
+            number -= 1
+            const exponent = Math.floor(Math.log10(Math.abs(number)))
+            const mantissa = number / Math.pow(10, exponent)
+            hyperE += "#" + bigNumToSuffix(mantissa, exponent, 0)
+        }
+        return hyperE
+    }
+    return mSuffixed + "{" + length + "}" + decimal.array[length - 1]
 }
 
 function formatWhole(decimal) {
-    decimal = new Decimal(decimal)
-    if (decimal.gte(1e9)) return format(decimal, 2)
-    if (decimal.lte(0.99) && !decimal.eq(0)) return format(decimal, 2)
-    return format(decimal, 0)
+    return format(decimal)
 }
 
 function formatTime(s) {
@@ -88,24 +207,10 @@ function formatTime(s) {
 }
 
 function toPlaces(x, precision, maxAccepted) {
-    x = new Decimal(x)
-    let result = x.toStringWithDecimalPlaces(precision)
-    if (new Decimal(result).gte(maxAccepted)) {
-        result = new Decimal(maxAccepted - Math.pow(0.1, precision)).toStringWithDecimalPlaces(precision)
+    x = new OmegaNum(x)
+    let result = x.toString(precision)
+    if (new OmegaNum(result).gte(maxAccepted)) {
+        result = new OmegaNum(maxAccepted - Math.pow(0.1, precision)).toString(precision)
     }
     return result
-}
-
-// Will also display very small numbers
-function formatSmall(x, precision=2) { 
-    return format(x, precision, true)    
-}
-
-function invertOOM(x){
-    let e = x.log10().ceil()
-    let m = x.div(Decimal.pow(10, e))
-    e = e.neg()
-    x = new Decimal(10).pow(e).times(m)
-
-    return x
 }

@@ -1,13 +1,15 @@
 let modInfo = {
-	name: "The Modding Tree",
-	id: "mymod",
-	author: "",
-	pointsName: "points",
+	name: "tree of jjt",
+	id: "tojjt",
+	author: "evilbocchi",
+	pointsName: "Skill",
+    modFiles: [],
+    
 	discordName: "",
 	discordLink: "",
-	initialStartPoints: new ExpantaNum (10), // Used for hard resets and new players
+	initialStartPoints: new OmegaNum(0), // Used for hard resets and new players
 	
-	offlineLimit: 1,  // In hours
+	offlineLimit: 6,  // In hours
 }
 
 // Set your version in num and name
@@ -23,30 +25,49 @@ let changelog = `<h1>Changelog:</h1><br>
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
+const difficulties = {
+    [-2]: ["tfird", "tlg", "negativity", "cash", "unimpossible", "friendliness", "trueease", "a", "felixthea"],
+    [-1]: []
+}
+const clnDiffs = [...difficulties[-2], ...difficulties[-1]]
+
+const sortedDiffs = []
+for (const [_, diffList] of Object.entries(difficulties))
+    for (const difficulty of diffList) {
+        sortedDiffs.push(difficulty)
+        modInfo.modFiles.push("layers/" + difficulty + ".js")
+    }
+        
+
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
 var doNotCallTheseFunctionsEveryTick = ["blowUpEverything"]
 
 function getStartPoints(){
-    return new ExpantaNum(modInfo.initialStartPoints)
+    return new OmegaNum(modInfo.initialStartPoints)
 }
 
 // Determines if it should show points/sec
 function canGenPoints(){
-	return true
+	return hasUpgrade('tfird', 101)
 }
 
 // Calculate points/sec!
+setTimeout(() => {
+    player.devSpeed = 0.01
+}, 500)
+
+const base = new OmegaNum(0.1);
 function getPointGen() {
 	if(!canGenPoints())
-		return new ExpantaNum(0)
-
-	let gain = new ExpantaNum(1)
-	return gain
+		return $ZERO
+	return getBoost(undefined, base)
 }
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() { return {
+    tickspeed: new OmegaNum(1),
+    resetTime: new OmegaNum(0)
 }}
 
 // Display extra things at the top of the page
@@ -64,7 +85,6 @@ function isEndgame() {
 
 // Style for the background, can be a function
 var backgroundStyle = {
-
 }
 
 // You can change this if you have things that can be messed up by long tick lengths
@@ -76,3 +96,52 @@ function maxTickLength() {
 // you can cap their current resources with this.
 function fixOldSave(oldVersion){
 }
+
+const ALL_UPGRADES = new Array()
+const POINT_UPGRADES = new Array()
+const UPPGRADES_PER_CURRENCY = new Map()
+async function loadLayers() {
+    for (const file of modInfo.modFiles) {
+        try {
+            await import("./" + file)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    
+    for (const sortedUpgrades of upgradesSortedPerLayer) {
+        for (const upgrade of sortedUpgrades) {
+            if (upgrade.effectCurrency === undefined) {
+               POINT_UPGRADES.push(upgrade) 
+            }
+            else {
+                let current = UPPGRADES_PER_CURRENCY.get(upgrade.effectCurrency)
+                if (current === undefined)
+                    current = [upgrade]
+                else
+                    current.push(upgrade)
+                UPPGRADES_PER_CURRENCY.set(upgrade.effectCurrency, current)
+            }
+                
+            ALL_UPGRADES.push(upgrade)
+        }
+    }
+}
+
+function getBoost(currency, base) {
+    const upgrades = currency === undefined ? POINT_UPGRADES : UPPGRADES_PER_CURRENCY.get(currency)
+    if (upgrades === undefined)
+        return base
+    for (const upgrade of upgrades) {
+        const calculated = upgrade.effect(upgrade.effectX ? upgrade.effectX() : undefined)
+        if (upgrade.overrideDisplay === true)
+            upgrade.effectDisplayStatic = getOperationSymbol(upgrade.effectOperation) + format(calculated)
+
+        if (upgrade.pseudo === true || hasUpgrade(upgrade.layerId, upgrade.upgradeId)) {
+            base = base[upgrade.effectOperation](calculated)
+        }
+    }
+	return base
+}
+
+loadLayers()

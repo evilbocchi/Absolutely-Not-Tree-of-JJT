@@ -1,4 +1,6 @@
 function hasUpgrade(layer, id) {
+    if (player === undefined)
+        return false
 	return ((player[layer].upgrades.includes(toNumber(id)) || player[layer].upgrades.includes(id.toString())) && !tmp[layer].deactivated)
 }
 
@@ -28,10 +30,6 @@ function getBuyableAmount(layer, id) {
 
 function setBuyableAmount(layer, id, amt) {
 	player[layer].buyables[id] = amt
-}
-
-function addBuyables(layer, id, amt) {
-	player[layer].buyables[id] = player[layer].buyables[id].add(amt)
 }
 
 function getClickableState(layer, id) {

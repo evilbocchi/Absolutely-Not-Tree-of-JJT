@@ -1,41 +1,61 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+@font-face {
+    font-family: 'Comic Neue Angular';
+    src: url('ComicNeueAngular.ttf');
+} 
+
 /* Global things */
+* {
+    font-synthesis: weight style small-caps;
+}
 body {
+    background-color: rgb(27, 27, 27);
 	color: var(--color);
 	overflow: hidden;
-	--background: #0f0f0f;
 	--color: #dfdfdf;
 	--points: #ffffff;
-	background: var(--background)
+    background-size: cover;
+}
+
+.bg2 {
+    background-color: rgb(27, 27, 27);
+    background-image: url("/resources/background.png");
+    filter: brightness(0.5);
 }
 
 /* General text */
 h1, h2, h3, b, input {
 	display: inline;
-	font-family: "Lucida Console", "Courier New", monospace
+	font-family: "Comic Neue Angular", "Courier New", monospace;
+    font-weight: bold;
 }
 
 /* These are styles for different states of components. You can make layer-specific versions with .c.locked, for example */
 .locked {
-	background-color: #bf8f8f;
+    filter: contrast(0.6);
+    transform: scale(0.95);
 	cursor: not-allowed;
 }
 
 /* Can meens can be clicked/bought/etc */
 .can {
 	cursor: pointer;
+    transition: 0.25s;
 }
 
 .can:hover {
-	transform: scale(1.15, 1.15);
-	box-shadow: 0 0 20px var(--points)
+	transform: scale(1.05, 1.05);
+	border: 2px solid rgba(255, 255, 255, 0.705);
 }
 
 .bought {
-	background-color: #77bf5f;
+	filter: opacity(0.4);
 	cursor: default;
 }
 
 #points {
 	color: var(--points);
-	text-shadow: 0 0 10px var(--points);
+    font-weight: bolder;
 }

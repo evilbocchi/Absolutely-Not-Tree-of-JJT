@@ -2,13 +2,13 @@ var layers = {}
 
 const defaultGlow = "#ff0000"
 
-const EN = ExpantaNum
-const ExpantaNumZero = new ExpantaNum(0)
-const ExpantaNumOne = new ExpantaNum(1)
-const ExpantaNumNaN = new ExpantaNum(NaN)
-const decimalZero = ExpantaNumZero
-const decimalOne= ExpantaNumOne
-const decimalNaN = ExpantaNumNaN
+const EN = OmegaNum
+const $ZERO = new OmegaNum(0)
+const $ONE = new OmegaNum(1)
+const $NAN = new OmegaNum(NaN)
+const decimalZero = $ZERO
+const decimalOne= $ONE
+const decimalNaN = $NAN
 function layerShown(layer){
     return tmp[layer].layerShown;
 }
@@ -126,7 +126,7 @@ function setupLayer(layer){
                 if (layers[layer].buyables[thing].unlocked === undefined)
                     layers[layer].buyables[thing].unlocked = true
                 layers[layer].buyables[thing].canBuy = function() {return canBuyBuyable(this.layer, this.id)}
-                if (layers[layer].buyables[thing].purchaseLimit === undefined) layers[layer].buyables[thing].purchaseLimit = new ExpantaNum(Infinity)
+                if (layers[layer].buyables[thing].purchaseLimit === undefined) layers[layer].buyables[thing].purchaseLimit = new OmegaNum(Infinity)
         
             }  
     
@@ -182,13 +182,13 @@ function setupLayer(layer){
     if(!layers[layer].componentStyles) layers[layer].componentStyles = {}
     if(layers[layer].symbol === undefined) layers[layer].symbol = layer.charAt(0).toUpperCase() + layer.slice(1)
     if(layers[layer].unlockOrder === undefined) layers[layer].unlockOrder = []
-    if(layers[layer].gainMult === undefined) layers[layer].gainMult = ExpantaNumOne
-    if(layers[layer].gainExp === undefined) layers[layer].gainExp = ExpantaNumOne
-    if(layers[layer].directMult === undefined) layers[layer].directMult = ExpantaNumOne
+    if(layers[layer].gainMult === undefined) layers[layer].gainMult = $ONE
+    if(layers[layer].gainExp === undefined) layers[layer].gainExp = $ONE
+    if(layers[layer].directMult === undefined) layers[layer].directMult = $ONE
     if(layers[layer].type === undefined) layers[layer].type = "none"
     if(layers[layer].base === undefined || layers[layer].base <= 1) layers[layer].base = 2
-    if(layers[layer].softcap === undefined) layers[layer].softcap = new ExpantaNum("e1e7")
-    if(layers[layer].softcapPower === undefined) layers[layer].softcapPower = new ExpantaNum("0.5")
+    if(layers[layer].softcap === undefined) layers[layer].softcap = new OmegaNum("e1e7")
+    if(layers[layer].softcapPower === undefined) layers[layer].softcapPower = new OmegaNum("0.5")
     if(layers[layer].displayRow === undefined) layers[layer].displayRow = layers[layer].row
     if(layers[layer].name === undefined) layers[layer].name = layer
     if(layers[layer].layerShown === undefined) layers[layer].layerShown = true
@@ -211,7 +211,6 @@ function setupLayer(layer){
     if (maxRow < layers[layer].displayRow) maxRow = layers[layer].displayRow
     
 }
-
 
 function addLayer(layerName, layerData, tabLayers = null){ // Call this to add layers from a different file!
     layers[layerName] = layerData

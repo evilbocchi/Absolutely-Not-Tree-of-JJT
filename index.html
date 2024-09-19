@@ -1,25 +1,22 @@
 <!DOCTYPE html>
 
 <head>
-
+    <link rel="stylesheet" type="text/css" href="css/general-style.css" />
 	<link rel="stylesheet" type="text/css" href="css/system-style.css" />
 	<link rel="stylesheet" type="text/css" href="css/bars.css" />
 	<link rel="stylesheet" type="text/css" href="css/components.css" />
-	<link rel="stylesheet" type="text/css" href="css/general-style.css" />
 	<link rel="stylesheet" type="text/css" href="css/misc.css" />
 	<link rel="stylesheet" type="text/css" href="css/other-tabs.css" />
 	<link rel="stylesheet" type="text/css" href="css/popup.css" />
 	<link rel="stylesheet" type="text/css" href="css/tree-node.css" />
-
-	<link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="resources/favicon.ico" />
 
 	<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
 	<script src="js/technical/break_eternity.js"></script>
 	<script src="js/technical/layerSupport.js"></script>
-
-	<script src="js/mod.js"></script>
-	<script src="js/technical/loader.js"></script>
-
+    <script src="js/technical/moreLayerSupport.js"></script>
+    <script src="js/tree.js"></script>
+    <script src="js/mod.js"></script>
 	<script src="js/technical/temp.js"></script>
 	<script src="js/technical/displays.js"></script>
 	
@@ -97,6 +94,12 @@
 					<tree-node :layer='node' :abb='tmp[node].symbol' :size="'small'" :key="'side' + index"></tree-node>
 				</div>
 			</div>
+            <div class="overlayFooter">
+                <span>Tickspeed: <strong>x{{format(player.tickspeed)}}</strong></span>
+                <br>
+                <span class="overlayThing">RT Playtime: <strong>{{format(player.timePlayed)}}</strong>&emsp;Reset Time: <strong>{{format(player.resetTime)}}</strong></span>
+                <br>
+            </div>
 		</div>
 		
 		<div v-if="!(tmp.gameEnded && !player.keepGoing) && (player.tab === 'none' || tmp.other.splitScreen)" id="treeTab"  onscroll="resizeCanvas()" 
@@ -108,6 +111,7 @@
 			<bg :layer="player.navTab == 'none' ? player.tab : player.navTab" ></bg>
 		</div>
 
+        
 		<!-- Popups -->
 		<div class="popup-container">
 			<transition-group name="fade">

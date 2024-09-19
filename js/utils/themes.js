@@ -7,8 +7,7 @@ var colors = {
 		2: "#bfbfbf",//Branch color 2
 		3: "#7f7f7f",//Branch color 3
 		color: "#dfdfdf",
-		points: "#ffffff",
-		locked: "#bf8f8f",
+		points: "rgb(105, 255, 115)",
 		background: "#0f0f0f",
 		background_tooltip: "rgba(0, 0, 0, 0.75)",
 	},
@@ -17,8 +16,7 @@ var colors = {
 		2: "#8fa7bf",
 		3: "#5f6f7f",
 		color: "#bfdfff",
-		points: "#dfefff",
-		locked: "#c4a7b3",
+		points: "rgb(105, 255, 115)",
 		background: "#001f3f",
 		background_tooltip: "rgba(0, 15, 31, 0.75)",
 	},
@@ -30,7 +28,6 @@ function changeTheme() {
 	document.body.style.setProperty('--background_tooltip', colors_theme["background_tooltip"]);
 	document.body.style.setProperty('--color', colors_theme["color"]);
 	document.body.style.setProperty('--points', colors_theme["points"]);
-	document.body.style.setProperty("--locked", colors_theme["locked"]);
 }
 function getThemeName() {
 	return options.theme? options.theme : "default";
