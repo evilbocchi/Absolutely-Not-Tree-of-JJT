@@ -23,7 +23,7 @@ createLayer({
             title: "Better Income",
             description: "Increase Cash gain by 4% compounding. Every 10 amount increases the compounding amount by 1%.",
             cost(x) {
-                return new OmegaNum(100).mul(OmegaNum.pow(1.4, x.add(1)))
+                return new OmegaNum(100).mul(OmegaNum.pow(1.4, x.add($ONE)))
             },
             effect(x) {
                 const v = x.add($ONE)
@@ -48,7 +48,7 @@ createLayer({
             title: "Obby Grinding",
             description: "Increase Skill gain by 5% compounding. Every 10 amounts increases the compounding amount by 1%.",
             cost(x) {
-                return new OmegaNum(100).mul(OmegaNum.pow(1.5, x.add(1)))
+                return new OmegaNum(100).mul(OmegaNum.pow(1.5, x.add($ONE)))
             },
             effect(x) {
                 const v = x.add($ONE)
@@ -73,7 +73,7 @@ createLayer({
             title: "Time Warping",
             description: "Increase tickspeed by 10% additively.",
             cost(x) {
-                return new OmegaNum(1e6).mul(OmegaNum.pow(1.4, x.add(1)))
+                return new OmegaNum(1e6).mul(OmegaNum.pow(1.4, x.add($ONE)))
             },
             effect(x) {
                 return $ONE.add(new OmegaNum(0.1).mul(x.add($ONE)))

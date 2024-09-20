@@ -19,12 +19,6 @@ body {
     background-size: cover;
 }
 
-.bg2 {
-    background-color: rgb(27, 27, 27);
-    background-image: url("/resources/background.png");
-    filter: brightness(0.5);
-}
-
 /* General text */
 h1, h2, h3, b, input {
 	display: inline;

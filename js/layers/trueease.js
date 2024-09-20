@@ -3,9 +3,76 @@ createLayer({
     symbol: "TrueEase",
     startData() { return {
         unlocked: true,
+        points: $ZERO
     }},
     color: "#fff",
     image: "https://static.wikia.nocookie.net/jtohs-joke-towers/images/5/53/True_Ease_%28New%29.webp",
+    tabFormat: [
+        "upgrades",
+        "blank",
+        "clickables",
+    ],
+    resource: "Tommy Clicks",
+    clickables: {
+        107: {
+            title: "TOMMY",
+            canClick() {
+                return this.unlocked()
+            },
+            display() {
+                const clicks = player.trueease.points
+                let d = "Click for some boosts!<br><br>Clicks: " + format(clicks)
+                
+                for (const effect of this.effects) {
+                    effect.effectDisplayStatic = getOperationSymbol(effect.effectOperation) + format(effect.effect(effect.effectX()))
+                    if (effect.effectAt !== undefined) {
+                        const diff = effect.effectAt.sub(clicks)
+                        if (diff.ispos()) {
+                            d += "<br>(Click " + format(diff) + " more times to unlock this boost!)"
+                            continue
+                        }
+                    }
+                    d += "<br>" + effect.effectDisplayStatic + " " + (effect.effectCurrency ?? "Skill")
+                }
+                return d
+            },
+            onClick: () => {
+                player.trueease.points = player.trueease.points.add($ONE)
+            },
+            style: {
+                "background-color": "pink",
+                "background-image": "url(/resources/tommy.png)",
+                "width": "600px",
+                "background-size": 'contain',
+                'background-repeat': 'no-repeat',
+            },
+            effects: [
+                {
+                    effectX: () => new OmegaNum(player.trueease.points),
+                    effectFormula: () => new Formula().add(1).log(2).pow(2).div(50).add(1),
+                    effectFormulaX: "clicks",
+                    effectOperation: 'mul',
+                },
+                {
+                    effectX: () => new OmegaNum(player.trueease.points),
+                    effectAt: new OmegaNum(500),
+                    effectFormula: () => new Formula().sub(499).log(3).pow(2).div(50).add(1),
+                    effectFormulaX: "clicks",
+                    effectCurrency: "Cash",
+                    effectOperation: 'mul',
+                },
+                {
+                    effectX: () => new OmegaNum(player.trueease.points),
+                    effectAt: new OmegaNum(1500),
+                    effectFormula: () => new Formula().sub(1499).log(4).pow(2).div(50).add(1),
+                    effectFormulaX: "clicks",
+                    effectCurrency: "Tickspeed",
+                    effectOperation: 'mul',
+                },
+            ],
+            unlocked: () => hasUpgrade("trueease", 106),
+        }
+    }
 })
 .addUpgrade({
     description: "Let's slow down a little now. x3 Skill gain but x0.75 tickspeed",
@@ -74,6 +141,14 @@ createLayer({
     overrideDisplay: true,
     style: {
         color: "blue"
+    }
+})
+.addUpgrade({
+    description: "Spawn in TOMMY, the solution to all your monetary problems",
+    cost: 20e9,
+    currency: "points",
+    style: {
+        color: "magenta"
     }
 })
 .register()

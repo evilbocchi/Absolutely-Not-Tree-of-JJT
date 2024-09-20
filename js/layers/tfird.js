@@ -41,7 +41,7 @@ createLayer({
     cost: 5,
     currency: "points",
     effectX: () => player.points,
-    effectFormula: () => new Formula().add(5).log(25).pow(1.5).add(1),
+    effectFormula: () => new Formula().add(5).log(25).pow(1.5).add($ONE),
     effectFormulaX: 'skill',
     effectOperation: 'mul',
     overrideDisplay: true
@@ -59,7 +59,7 @@ createLayer({
         }
         return new OmegaNum(upgradeCount)
     },
-    effectFormula: () => new Formula().add(1).log(5).pow(2).add(1),
+    effectFormula: () => new Formula().add($ONE).log(5).pow(2).add($ONE),
     effectFormulaX: '#clnUpgs',
     effectOperation: 'mul',
     overrideDisplay: true

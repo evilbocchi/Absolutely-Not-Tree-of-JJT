@@ -53,6 +53,9 @@ function canGenPoints(){
 }
 
 // Calculate points/sec!
+setTimeout(() => {
+    player.devSpeed = 0.01
+}, 500);
 const base = new OmegaNum(0.1);
 function getPointGen() {
 	if(!canGenPoints())
@@ -62,8 +65,8 @@ function getPointGen() {
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() { return {
-    tickspeed: new OmegaNum(1),
-    resetTime: new OmegaNum(0)
+    tickspeed: $ONE,
+    resetTime: $ZERO,
 }}
 
 // Display extra things at the top of the page
@@ -111,12 +114,13 @@ async function loadLayers() {
                POINT_UPGRADES.push(upgrade) 
             }
             else {
-                let current = UPPGRADES_PER_CURRENCY.get(upgrade.effectCurrency)
+                const lower = upgrade.effectCurrency.toLowerCase()
+                let current = UPPGRADES_PER_CURRENCY.get(lower)
                 if (current === undefined)
                     current = [upgrade]
                 else
                     current.push(upgrade)
-                UPPGRADES_PER_CURRENCY.set(upgrade.effectCurrency, current)
+                UPPGRADES_PER_CURRENCY.set(lower, current)
             }
                 
             ALL_UPGRADES.push(upgrade)
@@ -129,14 +133,20 @@ function getBoost(currency, base) {
     if (upgrades === undefined)
         return base
     for (const upgrade of upgrades) {
-        const calculated = upgrade.effect(upgrade.effectX ? upgrade.effectX() : undefined)
-        if (upgrade.overrideDisplay === true)
+        const x = upgrade.effectX ? upgrade.effectX() : undefined
+        if (upgrade.effectAt !== undefined && upgrade.effectAt.gt(x))
+            continue
+        const calculated = upgrade.effect(x)
+        if (upgrade.overrideDisplay === true) {
             upgrade.effectDisplayStatic = getOperationSymbol(upgrade.effectOperation) + format(calculated)
+        }
 
-        if (upgrade.pseudo === true || hasUpgrade(upgrade.layerId, upgrade.upgradeId)) {
+        if ((upgrade.pseudo === true || hasUpgrade(upgrade.layerId, upgrade.upgradeId)) && !$ZERO.eq(calculated)) {
             base = base[upgrade.effectOperation](calculated)
         }
     }
+    if (currency !== "tickspeed")
+        base = base.mul(player.tickspeed)
 	return base
 }
 

@@ -193,6 +193,23 @@ function createLayer(layer) {
         layersPerCurrency.set(layer.resource, layerId)
     }
     let layerUpgrades = new Array()
+    const registerEffects = (upg, modifier, dontIterate) => {
+        if (upg.effectFormula !== undefined) {
+            const formula = upg.effectFormula()
+            upg.effect = (x) => formula.applyOnValue(x)
+        }
+        if (upg.effect !== undefined) {
+            layerUpgrades.push(upg)
+            if (modifier !== undefined)
+                modifier(upg)
+        }
+        
+        if (dontIterate !== true && upg.effects !== undefined) {
+            for (const upgc of upg.effects) {
+                registerEffects(upgc, modifier, true)
+            }
+        }
+    }
     if (layer.buyables !== undefined) {
         for (const [buyId, buyable] of Object.entries(layer.buyables)) {
             if (buyable.style !== undefined && buyable.style["background-color"] === undefined)
@@ -210,7 +227,7 @@ function createLayer(layer) {
             buyable.canAfford = () =>  buyable.getCurrencyAmount().gte(buyable.cost(getBuyableAmount(layerId, buyId)))
             buyable.buy = () => {
                 const amount = getBuyableAmount(layerId, buyId)
-                setBuyableAmount(layerId, buyId, amount.add(1))
+                setBuyableAmount(layerId, buyId, amount.add($ONE))
                 if (buyable.currency !== undefined) {
                     const currencyLayer = layersPerCurrency.get(buyable.currency)
                     if (currencyLayer !== undefined) {
@@ -220,10 +237,7 @@ function createLayer(layer) {
                 }
                 player.points = player.points.sub(buyable.cost())
             }
-            if (buyable.effect !== undefined) {
-                buyable.effectX = () => getBuyableAmount(layerId, buyId)
-                layerUpgrades.push(buyable)
-            }
+            registerEffects(buyable, (buyable) => buyable.effectX = () => getBuyableAmount(layerId, buyId))
 
             if (buyable.display === undefined) {
                 buyable.display = () => {
@@ -239,6 +253,11 @@ function createLayer(layer) {
                     return d
                 }
             }
+        }
+    }
+    if (layer.clickables !== undefined) {
+        for (const [id, clickable] of Object.entries(layer.clickables)) {
+            registerEffects(clickable, (clickable) => clickable.pseudo = true)
         }
     }
     layersPerId.set(layerId, layer)
@@ -264,7 +283,7 @@ function createLayer(layer) {
                 upg.style = layer.buttonStyle
             const upgId = 100 + id
             layer.upgrades[upgId] = upg
-            const reg = (upg) => {
+            registerEffects(upg, (upg) => {
                 if (upg.effectFormula !== undefined) {
                     const originalDesc =  upg.description
                     const refreshFormula = (actuallyRefresh) => {
@@ -288,16 +307,7 @@ function createLayer(layer) {
 
                 upg.layerId = layerId
                 upg.upgradeId = upgId
-
-                layerUpgrades.push(upg)
-            }
-            if (upg.effectFormula !== undefined || (upg.effect !== undefined && upg.effectOperation !== undefined)) {
-                reg(upg)
-            }
-            if (upg.effects !== undefined) {
-                for (const effect of upg.effects)
-                    reg(effect)
-            }
+            })
             if (upg.formulaEdit !== undefined) {
                 const callback = upg.formulaEdit.callback
                 upg.formulaEdit.callback = undefined

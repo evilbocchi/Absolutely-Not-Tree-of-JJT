@@ -161,7 +161,7 @@ function format(decimal, precision = 2) {
             exponent = Math.floor(Math.log10(Math.abs(mult)))
             mantissa = mult / Math.pow(10, exponent)
         }
-        return bigNumToSuffix(mantissa, exponent)
+        return bigNumToSuffix(mantissa, exponent, precision)
     }
     if (decimal.lt(MAX_E_CHAIN))
         return toEChain(decimal)

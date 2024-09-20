@@ -21,7 +21,7 @@ function getResetGain(layer, useType = null) {
 		if ((!tmp[layer].canBuyMax) || tmp[layer].baseAmount.lt(tmp[layer].requires)) return $ONE
 		let gain = tmp[layer].baseAmount.div(tmp[layer].requires).div(tmp[layer].gainMult).max(1).log(tmp[layer].base).times(tmp[layer].gainExp).pow(OmegaNum.pow(tmp[layer].exponent, -1))
 		gain = gain.times(tmp[layer].directMult)
-		return gain.floor().sub(player[layer].points).add(1).max(1);
+		return gain.floor().sub(player[layer].points).add($ONE).max(1);
 	} else if (type=="normal"){
 		if (tmp[layer].baseAmount.lt(tmp[layer].requires)) return $ZERO
 		let gain = tmp[layer].baseAmount.div(tmp[layer].requires).pow(tmp[layer].exponent).times(tmp[layer].gainMult).pow(tmp[layer].gainExp)
@@ -58,7 +58,7 @@ function getNextAt(layer, canMax=false, useType = null) {
 		if (tmp[layer].roundUpCost) cost = cost.ceil()
 		return cost;
 	} else if (type=="normal"){
-		let next = tmp[layer].resetGain.add(1).div(tmp[layer].directMult)
+		let next = tmp[layer].resetGain.add($ONE).div(tmp[layer].directMult)
 		if (next.gte(tmp[layer].softcap)) next = next.div(tmp[layer].softcap.pow($ONE.sub(tmp[layer].softcapPower))).pow($ONE.div(tmp[layer].softcapPower))
 		next = next.root(tmp[layer].gainExp).div(tmp[layer].gainMult).root(tmp[layer].exponent).times(tmp[layer].requires).max(tmp[layer].requires)
 		if (tmp[layer].roundUpCost) next = next.ceil()
@@ -338,7 +338,7 @@ function gameLoop(diff) {
 			diff = limit
 	}
 	addTime(diff)
-    const diffWithTickspeed = player.tickspeed.mul(diff)
+    const diffWithTickspeed = new OmegaNum(diff)
 	player.points = player.points.add(tmp.pointGen.times(diffWithTickspeed)).max(0)
 
 	for (let x = 0; x <= maxRow; x++){
