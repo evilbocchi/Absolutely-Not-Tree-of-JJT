@@ -26,7 +26,7 @@ let changelog = `<h1>Changelog:</h1><br>
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
 const difficulties = {
-    [-2]: ["tfird", "tlg", "negativity", "cash", "unimpossible", "friendliness", "trueease", "a", "felixthea"],
+    [-2]: ["thefirstdifficulty", "thelowergap", "negativity", "cash", "unimpossible", "friendliness", "trueease", "a", "felixthea", "exist"],
     [-1]: []
 }
 const clnDiffs = [...difficulties[-2], ...difficulties[-1]]
@@ -49,12 +49,12 @@ function getStartPoints(){
 
 // Determines if it should show points/sec
 function canGenPoints(){
-	return hasUpgrade('tfird', 101)
+	return hasUpgrade('thefirstdifficulty', 101)
 }
 
 // Calculate points/sec!
 setTimeout(() => {
-    player.devSpeed = 0.01
+    player.devSpeed = 0.001
 }, 500);
 const base = new OmegaNum(0.1);
 function getPointGen() {
@@ -102,13 +102,15 @@ const UPPGRADES_PER_CURRENCY = new Map()
 async function loadLayers() {
     for (const file of modInfo.modFiles) {
         try {
-            await import("./" + file)
+           await import("./" + file)
         } catch (error) {
             console.log(error)
         }
     }
     
     for (const sortedUpgrades of upgradesSortedPerLayer) {
+        if (sortedUpgrades === undefined)
+            continue
         for (const upgrade of sortedUpgrades) {
             if (upgrade.effectCurrency === undefined) {
                POINT_UPGRADES.push(upgrade) 
@@ -128,8 +130,8 @@ async function loadLayers() {
     }
 }
 
-function getBoost(currency, base) {
-    const upgrades = currency === undefined ? POINT_UPGRADES : UPPGRADES_PER_CURRENCY.get(currency)
+function getBoost(currency, base, affectedByTickSpeed) {
+    const upgrades = currency === undefined ? POINT_UPGRADES : UPPGRADES_PER_CURRENCY.get(currency.toLowerCase())
     if (upgrades === undefined)
         return base
     for (const upgrade of upgrades) {
@@ -145,7 +147,8 @@ function getBoost(currency, base) {
             base = base[upgrade.effectOperation](calculated)
         }
     }
-    if (currency !== "tickspeed")
+
+    if (currency !== "tickspeed" && affectedByTickSpeed !== false)
         base = base.mul(player.tickspeed)
 	return base
 }

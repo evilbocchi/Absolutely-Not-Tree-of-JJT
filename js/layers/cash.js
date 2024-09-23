@@ -1,8 +1,7 @@
-createLayer({
+export default createLayer({
     name: "Cash",
-    symbol: "Cash",
     row: 2,
-    branches: ["tlg"],
+    branches: ["thelowergap"],
     startData() { return {
         unlocked: true,
         points: new OmegaNum(0)

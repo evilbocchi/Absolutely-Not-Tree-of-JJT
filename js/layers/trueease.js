@@ -1,6 +1,5 @@
-createLayer({
+export default createLayer({
     name: "True Ease",
-    symbol: "TrueEase",
     startData() { return {
         unlocked: true,
         points: $ZERO
@@ -12,10 +11,10 @@ createLayer({
         "blank",
         "clickables",
     ],
-    resource: "Tommy Clicks",
+    resource: "Cube Clicks",
     clickables: {
         107: {
-            title: "TOMMY",
+            title: "CUBE",
             canClick() {
                 return this.unlocked()
             },
@@ -37,24 +36,24 @@ createLayer({
                 return d
             },
             onClick: () => {
-                player.trueease.points = player.trueease.points.add($ONE)
+                player.trueease.points = player.trueease.points.add(player.ccpc)
             },
             style: {
                 "background-color": "pink",
-                "background-image": "url(/resources/tommy.png)",
+                "background-image": "url(./resources/tommy.png)",
                 "width": "600px",
                 "background-size": 'contain',
                 'background-repeat': 'no-repeat',
             },
             effects: [
                 {
-                    effectX: () => new OmegaNum(player.trueease.points),
+                    effectX: () => player.trueease.points,
                     effectFormula: () => new Formula().add(1).log(2).pow(2).div(50).add(1),
                     effectFormulaX: "clicks",
                     effectOperation: 'mul',
                 },
                 {
-                    effectX: () => new OmegaNum(player.trueease.points),
+                    effectX: () => player.trueease.points,
                     effectAt: new OmegaNum(500),
                     effectFormula: () => new Formula().sub(499).log(3).pow(2).div(50).add(1),
                     effectFormulaX: "clicks",
@@ -62,7 +61,7 @@ createLayer({
                     effectOperation: 'mul',
                 },
                 {
-                    effectX: () => new OmegaNum(player.trueease.points),
+                    effectX: () => player.trueease.points,
                     effectAt: new OmegaNum(1500),
                     effectFormula: () => new Formula().sub(1499).log(4).pow(2).div(50).add(1),
                     effectFormulaX: "clicks",
@@ -75,7 +74,7 @@ createLayer({
     }
 })
 .addUpgrade({
-    description: "Let's slow down a little now. x3 Skill gain but x0.75 tickspeed",
+    description: "Let's slow down a little now. x3 Skill gain but x0.75 Tickspeed",
     cost: 225e6,
     currency: "points",
     style: {
@@ -122,7 +121,7 @@ createLayer({
 })
 .addUpgrade({
     description: "At least not as bad as yellow. x3 Skill gain if less than 100B Skill, otherwise x2.",
-    cost: 3e9,
+    cost: 6e9,
     currency: "points",
     effect: () => player.points.lt(100e9) ? 3 : 2,
     effectOperation: 'mul',
@@ -132,9 +131,9 @@ createLayer({
 })
 .addUpgrade({
     description: "Boost Skill gain by Cash again",
-    cost: 9.5e9,
+    cost: 19.5e9,
     currency: "points",
-    effectX: () => new OmegaNum(player.cash.points),
+    effectX: () => player.cash.points,
     effectFormula: () => new Formula().pow(0.05),
     effectFormulaX: "cash",
     effectOperation: 'mul',
@@ -144,8 +143,8 @@ createLayer({
     }
 })
 .addUpgrade({
-    description: "Spawn in TOMMY, the solution to all your monetary problems",
-    cost: 20e9,
+    description: "Spawn in CUBE, the solution to all your monetary problems",
+    cost: 50e9,
     currency: "points",
     style: {
         color: "magenta"

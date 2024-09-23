@@ -1,6 +1,5 @@
-createLayer({
+export default createLayer({
     name: "Unimpossible",
-    symbol: "Unimpossible",
     branches: ["negativity", "cash"],
     startData() { return {
         unlocked: true,
@@ -26,9 +25,8 @@ createLayer({
                 return new OmegaNum(100).mul(OmegaNum.pow(1.4, x.add($ONE)))
             },
             effect(x) {
-                const v = x.add($ONE)
-                const boost = new OmegaNum(0.01).mul(v.div(10).floor())
-                return new OmegaNum(1.04).add(boost).pow(v)
+                const boost = new OmegaNum(0.01).mul(x.add($ONE).div(10).floor())
+                return new OmegaNum(1.04).add(boost).pow(x)
             },
             effectCurrency: "Cash",
             effectOperation: 'mul',
@@ -51,9 +49,8 @@ createLayer({
                 return new OmegaNum(100).mul(OmegaNum.pow(1.5, x.add($ONE)))
             },
             effect(x) {
-                const v = x.add($ONE)
-                const boost = new OmegaNum(0.01).mul(v.div(10).floor())
-                return new OmegaNum(1.05).add(boost).pow(v)
+                const boost = new OmegaNum(0.01).mul(x.add($ONE).div(10).floor())
+                return new OmegaNum(1.05).add(boost).pow(x)
             },
             effectOperation: 'mul',
             overrideDisplay: true,
@@ -76,7 +73,7 @@ createLayer({
                 return new OmegaNum(1e6).mul(OmegaNum.pow(1.4, x.add($ONE)))
             },
             effect(x) {
-                return $ONE.add(new OmegaNum(0.1).mul(x.add($ONE)))
+                return $ONE.add(new OmegaNum(0.1).mul(x))
             },
             effectCurrency: 'tickspeed',
             effectOperation: 'mul',
@@ -106,7 +103,7 @@ createLayer({
     description: "Boost Skill gain by Cash",
     cost: 40,
     currency: "Cash",
-    effectX: () => new OmegaNum(player.cash.points),
+    effectX: () => player.cash.points,
     effectFormula: () => new Formula().pow(0.15),
     effectFormulaX: "cash",
     effectOperation: 'mul',
@@ -115,18 +112,18 @@ createLayer({
 .addUpgrade({
     description: "Boost Cash gain by Skill",
     cost: 350e3,
-    effectX: () => new OmegaNum(player.points),
+    currency: "points",
+    effectX: () => player.points,
     effectFormula: () => new Formula().pow(0.05),
     effectFormulaX: "skill",
     effectCurrency: "Cash",
     effectOperation: 'mul',
     overrideDisplay: true,
-    currency: "points",
 })
 .addUpgrade({
     description: "Make TLG 4's Skill-Skill boost better",
     formulaEdit: {
-        layer: "tlg",
+        layer: "thelowergap",
         upgrade: 104,
         callback: (formula) => {
             formula.operations[1].amount = formula.operations[1].amount.sub(13)

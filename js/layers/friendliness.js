@@ -1,6 +1,5 @@
-createLayer({
+export default createLayer({
     name: "Friendliness",
-    symbol: "Friendliness",
     startData() { return {
         unlocked: true,
     }},
@@ -11,7 +10,7 @@ createLayer({
     image: "https://static.wikia.nocookie.net/jtohs-joke-towers/images/c/c8/FPnew.png",
 })
 .addUpgrade({
-    description: "Boost Skill by tickspeed",
+    description: "Boost Skill by Tickspeed",
     effectFormula: () => new Formula().pow(0.2),
     effectX: () => player.tickspeed,
     effectFormulaX: "tickspeed",
@@ -38,7 +37,7 @@ createLayer({
     
 })
 .addUpgrade({
-    description: "RT Playtime boosts tickspeed",
+    description: "RT Playtime boosts Tickspeed",
     cost: 40e6,
     effectX: () => new OmegaNum(player.timePlayed),
     effectFormula: () => new Formula().log(2).pow(0.65),

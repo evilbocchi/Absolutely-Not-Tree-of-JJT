@@ -1,6 +1,5 @@
-createLayer({
+export default createLayer({
     name: "The Lower Gap",
-    symbol: "TLG",
     startData() { return {
         unlocked: true
     }},
@@ -66,7 +65,7 @@ createLayer({
     cost: 900,
     currency: "points",
     formulaEdit: {
-        layer: "tlg",
+        layer: "thelowergap",
         upgrade: 102,
         callback: (formula) => {
             formula.operations[1].amount = formula.operations[1].amount.add(0.1)

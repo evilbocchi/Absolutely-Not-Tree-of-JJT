@@ -1,6 +1,5 @@
-createLayer({
+export default createLayer({
     name: "The First Difficulty",
-    symbol: "TFirD",
     startData() { return {
         unlocked: true,
     }},

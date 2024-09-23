@@ -1,6 +1,5 @@
-createLayer({
+export default createLayer({
     name: "Negativity",
-    symbol: "Negativity",
     startData() { return {
         unlocked: true,
     }},
@@ -17,7 +16,7 @@ createLayer({
 .addUpgrade({
     description: "Make TFirD 4's Skill-Skill boost better",
     formulaEdit: {
-        layer: "tfird",
+        layer: "thefirstdifficulty",
         upgrade: 104,
         callback: (formula) => {
             formula.operations[1].amount = formula.operations[1].amount.sub(8)

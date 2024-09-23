@@ -160,10 +160,14 @@ function editFormula(layerId, upgradeId, editCallback) {
 
 const layersPerCurrency = new Map()
 function createLayer(layer) {
+    if (layer.symbol === undefined) {
+        layer.symbol = layer.name.replace(/[^a-zA-Z0-9]/g, '')
+    }
     const layerId = layer.symbol.toLowerCase()
     const layerCount = sortedDiffs.indexOf(layerId) ?? layersPerId.size
     if (layerCount > 0 && layer.branches === undefined) {
         layer.branches = [sortedDiffs[layerCount - 1]]
+        console.log(layer.branches)
     }
     if (layer.position === undefined)
         layer.position = layerCount
@@ -180,7 +184,10 @@ function createLayer(layer) {
         let allow = true
         for (const branch of branches) {
             allow = false
-            const lastUpgrade = tmp[branch].lastUpgrade
+            const tmpBranch = tmp[branch]
+            if (tmpBranch === undefined)
+                continue
+            const lastUpgrade = tmpBranch.lastUpgrade
             if (lastUpgrade !== undefined && hasUpgrade(branch, lastUpgrade.id))
                 return branch.layerShown ?? true
         }
@@ -188,7 +195,7 @@ function createLayer(layer) {
     }
     layer.upgrades = {}
     if (layer.tabFormat === undefined)
-        layer.tabFormat = ["upgrades"]
+        layer.tabFormat = ["milestones", "blank", "upgrades"]
     if (layer.resource !== undefined) {
         layersPerCurrency.set(layer.resource, layerId)
     }
