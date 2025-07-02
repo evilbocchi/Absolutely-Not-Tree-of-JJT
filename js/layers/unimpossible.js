@@ -1,6 +1,6 @@
 export default createLayer({
     name: "Unimpossible",
-    branches: ["negativity", "cash"],
+    branches: ["thelowergap"],
     startData() { return {
         unlocked: true,
     }},
@@ -92,46 +92,44 @@ export default createLayer({
     }
 })
 .addUpgrade({
-    description: "x2 Cash gain",
-    cost: 115000,
+    description: "Multiplies Skill gain based on ResetTime, caps at 1Ce ResetTime.",
+    cost: 50000,
     currency: "points",
-    effect: () => 2,
-    effectOperation: 'mul',
-    effectCurrency: "Cash",
-})
-.addUpgrade({
-    description: "Boost Skill gain by Cash",
-    cost: 40,
-    currency: "Cash",
-    effectX: () => player.cash.points,
-    effectFormula: () => new Formula().pow(0.15),
-    effectFormulaX: "cash",
+    effectX: () => player.resetTime,
+    effectFormula: () => new Formula().add(42).log(42),
+    effectFormulaX: "ResetTime",
     effectOperation: 'mul',
     overrideDisplay: true,
 })
 .addUpgrade({
-    description: "Boost Cash gain by Skill",
-    cost: 350e3,
+    description: "4x Skill gain, 2x Cash gain.",
+    cost: 225000,
     currency: "points",
-    effectX: () => player.points,
-    effectFormula: () => new Formula().pow(0.05),
-    effectFormulaX: "skill",
-    effectCurrency: "Cash",
-    effectOperation: 'mul',
-    overrideDisplay: true,
-})
-.addUpgrade({
-    description: "Make TLG 4's Skill-Skill boost better",
-    formulaEdit: {
-        layer: "thelowergap",
-        upgrade: 104,
-        callback: (formula) => {
-            formula.operations[1].amount = formula.operations[1].amount.sub(13)
-            return formula
+    effects: [
+        {
+            effect: () => 4,
+            effectOperation: 'mul',
+            effectCurrency: 'skill',
+        },
+        {
+            effect: () => 2,
+            effectOperation: 'mul',
+            effectCurrency: 'Cash'
         }
-    },
-    cost: 600e3,
+    ]
+})
+.addUpgrade({
+    description: "1.01x Skill gain. Overpowered.",
+    cost: 1000000,
     currency: "points",
+    effect: () => 1.01,
+    effectOperation: 'mul',
+})
+.addUpgrade({
+    description: "Multiplies Skill gain based on Total Playtime.",
+    cost: 1500000,
+    currency: "points",
+    
 })
 .addUpgrade({
     description: "x1.5 Tickspeed and Cash",

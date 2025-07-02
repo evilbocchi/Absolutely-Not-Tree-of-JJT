@@ -54,9 +54,9 @@ function canGenPoints(){
 
 // Calculate points/sec!
 setTimeout(() => {
-    player.devSpeed = 1
+    player.devSpeed = 0.01
 }, 500);
-const base = new OmegaNum(0.1);
+const base = new OmegaNum(0.01);
 function getPointGen() {
 	if(!canGenPoints())
 		return $ZERO
@@ -130,6 +130,14 @@ async function loadLayers() {
     }
 }
 
+/**
+ * Get the boost on a currency based on the upgrades that affect it.
+ * 
+ * @param {string} currency The currency to get the boost for, or undefined for points 
+ * @param {OmegaNum} base The base value to apply the upgrades to.
+ * @param {boolean?} affectedByTickSpeed If the boost should be affected by tick speed. Defaults to true if not specified. 
+ * @returns 
+ */
 function getBoost(currency, base, affectedByTickSpeed) {
     const upgrades = currency === undefined ? POINT_UPGRADES : UPPGRADES_PER_CURRENCY.get(currency.toLowerCase())
     if (upgrades === undefined)

@@ -1,8 +1,10 @@
 export default createLayer({
     name: "The Lower Gap",
-    startData() { return {
-        unlocked: true
-    }},
+    startData() {
+        return {
+            unlocked: true
+        }
+    },
     color: "rgb(0, 30, 0)",
     style: {
         color: "white",
@@ -21,56 +23,72 @@ export default createLayer({
         player.resetTime = player.resetTime.add(player.tickspeed.mul(diff).mul(getBoost("resetTime", $ONE)))
     }
 })
-.addUpgrade({
-    description: "x1 Skill gain. This is an upgrade after TFirD 5",
-    cost: 25,
-    currency: "points",
-})
-.addUpgrade({
-    description: "Skill gain is boosted by Reset Time, the time elapsed before a reset",
-    cost: 40,
-    currency: "points",
-    effectX: () => player.resetTime,
-    effectFormula: () => new Formula().add(5).pow(0.1).add(0.6),
-    effectFormulaX: "reset",
-    effectOperation: 'mul',
-    overrideDisplay: true,
-})
-.addUpgrade({
-    description: "Double your Skill gain",
-    cost: 85,
-    effect: () => 2,
-    effectOperation: 'mul',
-    currency: "points",
-})
-.addUpgrade({
-    description: "Boost Skill gain by itself again",
-    cost: 200,
-    currency: "points",
-    effectX: () => player.points,
-    effectFormula: () => new Formula().add(100).log(25).sqrt(),
-    effectFormulaX: "skill",
-    effectOperation: 'mul',
-    overrideDisplay: true
-})
-.addUpgrade({
-    description: "x1.5 Skill gain",
-    cost: 450,
-    currency: "points",
-    effect: () => 1.5,
-    effectOperation: 'mul',
-})
-.addUpgrade({
-    description: "Make TLG 2's Reset Time-Skill boost better",
-    cost: 900,
-    currency: "points",
-    formulaEdit: {
-        layer: "thelowergap",
-        upgrade: 102,
-        callback: (formula) => {
-            formula.operations[1].amount = formula.operations[1].amount.add(0.1)
-            return formula
-        }
-    },
-})
-.register()
+    .addUpgrade({
+        description: "Skill gain is multiplied based on ResetTime, with a cap at 1Ce Skill.",
+        cost: 1.25,
+        currency: "points",
+        effectX: () => player.resetTime,
+        effectFormula: () => new Formula().add(20).log(20),
+        effectFormulaX: "ResetTime",
+        effectOperation: 'mul',
+        overrideDisplay: true,
+    })
+    .addUpgrade({
+        description: "2x Skill gain.",
+        cost: 3.75,
+        effect: () => 2,
+        effectOperation: 'mul',
+        currency: "points",
+    })
+    .addUpgrade({
+        description: "Subtracts 5 from the base of UP5's log.",
+        cost: 8,
+        currency: "points",
+        formulaEdit: {
+            layer: "thefirstdifficulty",
+            upgrade: 105,
+            callback: (formula) => {
+                formula.operations[1].amount = formula.operations[1].amount.sub(5)
+                return formula
+            }
+        },
+    })
+    .addUpgrade({
+        description: "Skill gain is now multiplied based on Total Playtime.",
+        cost: 12.5,
+        currency: "points",
+        effectX: () => new OmegaNum(player.timePlayed),
+        effectFormula: () => new Formula().add(15).log(15),
+        effectFormulaX: "TP",
+        effectOperation: 'mul',
+        overrideDisplay: true,
+    })
+    .addUpgrade({
+        description: "Increases the base of UP4's boost by 0.025",
+        cost: 30,
+        currency: "points",
+        formulaEdit: {
+            layer: "thefirstdifficulty",
+            upgrade: 104,
+            callback: (formula) => {
+                formula.operations[0].amount = formula.operations[0].amount.add(0.025)
+                return formula
+            }
+        },
+    })
+    .addUpgrade({
+        description: "1.75x Skill gain.",
+        cost: 80,
+        currency: "points",
+        effect: () => 1.75,
+        effectOperation: 'mul',
+    })
+    .addUpgrade({
+        description: "1.25x Tickspeed.",
+        cost: 175,
+        currency: "points",
+        effect: () => 1.25,
+        effectOperation: 'mul',
+        effectCurrency: 'tickspeed',
+    })
+    .register()

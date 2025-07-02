@@ -35,7 +35,7 @@ export default createLayer({
     }
 })
 .addUpgrade({
-    description: "Start producing Cash",
+    description: "Begins Cash generation.",
     cost: 100000,
     currency: "points"
 })

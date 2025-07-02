@@ -1,8 +1,10 @@
 export default createLayer({
     name: "The First Difficulty",
-    startData() { return {
-        unlocked: true,
-    }},
+    startData() {
+        return {
+            unlocked: true,
+        }
+    },
     color: "rgb(25, 25, 25)",
     style: {
         color: "white",
@@ -16,51 +18,51 @@ export default createLayer({
         player.tickspeed = getBoost("tickspeed", $ONE)
     }
 })
-.addUpgrade({
-    description: "Start producing Skill",
-    cost: 0,
-    currency: "points",
-})
-.addUpgrade({
-    description: "Double your Skill gain",
-    cost: 1,
-    effect: () => 2,
-    effectOperation: 'mul',
-    currency: "points",
-})
-.addUpgrade({
-    description: "Triple your Skill gain",
-    cost: 2,
-    effect: () => 3,
-    effectOperation: 'mul',
-    currency: "points",
-})
-.addUpgrade({
-    description: "Skill boosts itself by its amount",
-    cost: 5,
-    currency: "points",
-    effectX: () => player.points,
-    effectFormula: () => new Formula().add(5).log(25).pow(1.5).add($ONE),
-    effectFormulaX: 'skill',
-    effectOperation: 'mul',
-    overrideDisplay: true
-})
-.addUpgrade({
-    description: "Boost Skill gain based on how many Class Negative upgrades you own",
-    cost: 10,
-    currency: "points",
-    effectX: () => {
-        let upgradeCount = 0
-        for (const diff of clnDiffs) {
-            const len = player[diff]?.upgrades.length;
-            if (len !== undefined)
-                upgradeCount += len
-        }
-        return new OmegaNum(upgradeCount)
-    },
-    effectFormula: () => new Formula().add($ONE).log(5).pow(2).add($ONE),
-    effectFormulaX: '#clnUpgs',
-    effectOperation: 'mul',
-    overrideDisplay: true
-})
-.register()
+    .addUpgrade({
+        description: "Begins Skill gain.",
+        cost: 0,
+        currency: "points",
+    })
+    .addUpgrade({
+        description: "1.5x Skill gain.",
+        cost: 0.1,
+        effect: () => 1.5,
+        effectOperation: 'mul',
+        currency: "points",
+    })
+    .addUpgrade({
+        description: "2x Skill gain.",
+        cost: 0.15,
+        effect: () => 2,
+        effectOperation: 'mul',
+        currency: "points",
+    })
+    .addUpgrade({
+        description: "1.1x Skill gain for every #CLN upgrade bought.",
+        cost: 0.4,
+        currency: "points",
+        effectX: () => {
+            let upgradeCount = 0
+            for (const diff of clnDiffs) {
+                const len = player[diff]?.upgrades.length;
+                if (len !== undefined)
+                    upgradeCount += len
+            }
+            return new OmegaNum(upgradeCount)
+        },
+        effectFormula: () => new Formula().mul(0.1).add(1),
+        effectFormulaX: '#clnUpgs',
+        effectOperation: 'mul',
+        overrideDisplay: true
+    })
+    .addUpgrade({
+        description: "Skill now boosts itself, with a cap at 1Ce Skill.",
+        cost: 1,
+        currency: "points",
+        effectX: () => player.points,
+        effectFormula: () => new Formula().add(1).log(15).pow(1.25).add(1),
+        effectFormulaX: 'Skill',
+        effectOperation: 'mul',
+        overrideDisplay: true
+    })
+    .register()
