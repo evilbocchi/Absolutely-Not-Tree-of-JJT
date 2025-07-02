@@ -41,7 +41,7 @@ export default createLayer({
         currency: "points",
     })
     .addUpgrade({
-        description: "Subtracts 5 from the base of UP5's log.",
+        description: "Subtracts 5 from the base of The First Difficulty 5's log.",
         cost: 8,
         currency: "points",
         formulaEdit: {
@@ -64,7 +64,7 @@ export default createLayer({
         overrideDisplay: true,
     })
     .addUpgrade({
-        description: "Increases the base of UP4's boost by 0.025",
+        description: "Increases the base of The First Difficulty 4's boost by 0.025",
         cost: 30,
         currency: "points",
         formulaEdit: {

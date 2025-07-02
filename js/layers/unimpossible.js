@@ -20,13 +20,13 @@ export default createLayer({
     buyables: {
         107: {
             title: "Better Income",
-            description: "Increase Cash gain by 4% compounding. Every 10 amount increases the compounding amount by 1%.",
+            description: "Increase Cash gain by 20% compounding per Quantity, and for every 10 Quantities, the compounding amount increases by 1%.",
             cost(x) {
-                return new OmegaNum(100).mul(OmegaNum.pow(1.4, x.add($ONE)))
+                return new OmegaNum(20).mul(OmegaNum.pow(1.4, x.add($ONE)))
             },
             effect(x) {
                 const boost = new OmegaNum(0.01).mul(x.add($ONE).div(10).floor())
-                return new OmegaNum(1.04).add(boost).pow(x)
+                return new OmegaNum(1.2).add(boost).pow(x)
             },
             effectCurrency: "Cash",
             effectOperation: 'mul',
@@ -44,13 +44,13 @@ export default createLayer({
         },
         108: {
             title: "Obby Grinding",
-            description: "Increase Skill gain by 5% compounding. Every 10 amounts increases the compounding amount by 1%.",
+            description: "Increase Skill gain by 15% per Quantity, and for every 10 Quantities, doubles the effect.",
             cost(x) {
-                return new OmegaNum(100).mul(OmegaNum.pow(1.5, x.add($ONE)))
+                return new OmegaNum(55).mul(OmegaNum.pow(1.5, x.add($ONE)))
             },
             effect(x) {
-                const boost = new OmegaNum(0.01).mul(x.add($ONE).div(10).floor())
-                return new OmegaNum(1.05).add(boost).pow(x)
+                const base = new OmegaNum(0.15).mul(x).mul(x.add($ONE).div(10).floor())
+                return new OmegaNum(1).add(base)
             },
             effectOperation: 'mul',
             overrideDisplay: true,
@@ -61,29 +61,6 @@ export default createLayer({
                 "background-size": 'contain',
                 'background-repeat': 'no-repeat',
                 "background-color": "rgb(100, 50, 0)",
-                color: "white"
-            },
-            unlocked: () => hasUpgrade("unimpossible", 106),
-            purchaseLimit: 150
-        },
-        109: {
-            title: "Time Warping",
-            description: "Increase tickspeed by 10% additively.",
-            cost(x) {
-                return new OmegaNum(1e6).mul(OmegaNum.pow(1.4, x.add($ONE)))
-            },
-            effect(x) {
-                return $ONE.add(new OmegaNum(0.1).mul(x))
-            },
-            effectCurrency: 'tickspeed',
-            effectOperation: 'mul',
-            overrideDisplay: true,
-            currency: "points",
-            style: {
-                "background-image": "linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url(https://cdn.icon-icons.com/icons2/1465/PNG/512/633hourglassnotdone2_100213.png)",
-                "background-size": 'contain',
-                'background-repeat': 'no-repeat',
-                "background-color": "rgb(10, 100, 200)",
                 color: "white"
             },
             unlocked: () => hasUpgrade("unimpossible", 106),
@@ -132,25 +109,34 @@ export default createLayer({
     
 })
 .addUpgrade({
-    description: "x1.5 Tickspeed and Cash",
-    cost: 160,
-    currency: "Cash",
-    effects: [
-        {
-            effect: () => 1.5,
-            effectOperation: 'mul',
-            effectCurrency: 'Cash',
-        },
-        {
-            effect: () => 1.5,
-            effectOperation: 'mul',
-            effectCurrency: 'tickspeed'
+    description: "Subtracts 13 from the base of Unimpossible 1's logarithm.",
+    cost: 5000000,
+    currency: "points",
+    formulaEdit: {
+        layer: "unimpossible",
+        upgrade: 101,
+        callback: (formula) => {
+            formula.operations[1].amount = formula.operations[1].amount.sub(13)
+            return formula
         }
-    ]
+    },
+})
+.addUpgrade({
+    description: "1.5x Tickspeed.",
+    cost: 10000000,
+    currency: "points",
+    effect: () => 1.5,
+    effectOperation: 'mul',
+    effectCurrency: 'tickspeed',
 })
 .addUpgrade({
     description: "Unlock 3 new buyables",
-    cost: 2e6,
+    cost: 25000000,
     currency: "points",
+})
+.addUpgrade({
+    description: "Expand the tree.",
+    cost: 300,
+    currency: "Cash",
 })
 .register()

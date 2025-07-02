@@ -16,7 +16,7 @@ export default createLayer({
     image: "https://static.wikia.nocookie.net/jtohs-joke-towers/images/9/90/Negativity.png",
 })
     .addUpgrade({
-        description: "Increases the exponent of UP5 by .25.",
+        description: "Increases the exponent of The First Difficulty 5 by .25.",
         cost: 4000,
         currency: "points",
         formulaEdit: {
@@ -36,7 +36,7 @@ export default createLayer({
         effectOperation: 'mul',
     })
     .addUpgrade({
-        description: "Decreases the log of UP5 by 2.5.",
+        description: "Decreases the log of The First Difficulty 5 by 2.5.",
         cost: 8000,
         currency: "points",
         formulaEdit: {
