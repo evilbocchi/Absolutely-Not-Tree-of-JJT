@@ -1,9 +1,11 @@
 export default createLayer({
     name: "Unimpossible",
     branches: ["thelowergap"],
-    startData() { return {
-        unlocked: true,
-    }},
+    startData() {
+        return {
+            unlocked: true,
+        }
+    },
     color: "rgb(100, 0, 150)",
     style: {
         color: "white",
@@ -68,75 +70,75 @@ export default createLayer({
         },
     }
 })
-.addUpgrade({
-    description: "Multiplies Skill gain based on ResetTime, caps at 1Ce ResetTime.",
-    cost: 50000,
-    currency: "points",
-    effectX: () => player.resetTime,
-    effectFormula: () => new Formula().add(42).log(42),
-    effectFormulaX: "ResetTime",
-    effectOperation: 'mul',
-    overrideDisplay: true,
-})
-.addUpgrade({
-    description: "4x Skill gain, 2x Cash gain.",
-    cost: 225000,
-    currency: "points",
-    effects: [
-        {
-            effect: () => 4,
-            effectOperation: 'mul',
-            effectCurrency: 'skill',
+    .addUpgrade({
+        description: "Multiplies Skill gain based on ResetTime, caps at 1Ce ResetTime.",
+        cost: 50000,
+        currency: "points",
+        effectX: () => player.resetTime,
+        effectFormula: () => new Formula().add(42).log(42),
+        effectFormulaX: "ResetTime",
+        effectOperation: 'mul',
+        overrideDisplay: true,
+    })
+    .addUpgrade({
+        description: "4x Skill gain, 2x Cash gain.",
+        cost: 225000,
+        currency: "points",
+        effects: [
+            {
+                effect: () => 4,
+                effectOperation: 'mul',
+                effectCurrency: 'skill',
+            },
+            {
+                effect: () => 2,
+                effectOperation: 'mul',
+                effectCurrency: 'Cash'
+            }
+        ]
+    })
+    .addUpgrade({
+        description: "1.01x Skill gain. Overpowered.",
+        cost: 1000000,
+        currency: "points",
+        effect: () => 1.01,
+        effectOperation: 'mul',
+    })
+    .addUpgrade({
+        description: "Multiplies Skill gain based on Total Playtime.",
+        cost: 1500000,
+        currency: "points",
+
+    })
+    .addUpgrade({
+        description: "Subtracts 13 from the base of Unimpossible 1's logarithm.",
+        cost: 5000000,
+        currency: "points",
+        formulaEdit: {
+            layer: "unimpossible",
+            upgrade: 101,
+            callback: (formula) => {
+                formula.operations[1].amount = formula.operations[1].amount.sub(13)
+                return formula
+            }
         },
-        {
-            effect: () => 2,
-            effectOperation: 'mul',
-            effectCurrency: 'Cash'
-        }
-    ]
-})
-.addUpgrade({
-    description: "1.01x Skill gain. Overpowered.",
-    cost: 1000000,
-    currency: "points",
-    effect: () => 1.01,
-    effectOperation: 'mul',
-})
-.addUpgrade({
-    description: "Multiplies Skill gain based on Total Playtime.",
-    cost: 1500000,
-    currency: "points",
-    
-})
-.addUpgrade({
-    description: "Subtracts 13 from the base of Unimpossible 1's logarithm.",
-    cost: 5000000,
-    currency: "points",
-    formulaEdit: {
-        layer: "unimpossible",
-        upgrade: 101,
-        callback: (formula) => {
-            formula.operations[1].amount = formula.operations[1].amount.sub(13)
-            return formula
-        }
-    },
-})
-.addUpgrade({
-    description: "1.5x Tickspeed.",
-    cost: 10000000,
-    currency: "points",
-    effect: () => 1.5,
-    effectOperation: 'mul',
-    effectCurrency: 'tickspeed',
-})
-.addUpgrade({
-    description: "Unlock 3 new buyables",
-    cost: 25000000,
-    currency: "points",
-})
-.addUpgrade({
-    description: "Expand the tree.",
-    cost: 300,
-    currency: "Cash",
-})
-.register()
+    })
+    .addUpgrade({
+        description: "1.5x Tickspeed.",
+        cost: 10000000,
+        currency: "points",
+        effect: () => 1.5,
+        effectOperation: 'mul',
+        effectCurrency: 'tickspeed',
+    })
+    .addUpgrade({
+        description: "Unlocks Upgrade Board I.",
+        cost: 25000000,
+        currency: "points",
+    })
+    .addUpgrade({
+        description: "Expand the tree.",
+        cost: 300,
+        currency: "Cash",
+    })
+    .register()
