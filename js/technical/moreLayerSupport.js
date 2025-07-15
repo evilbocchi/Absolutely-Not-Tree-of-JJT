@@ -147,9 +147,9 @@ class Formula {
     }
 }
 
-function editFormula (layerId, upgradeId, editCallback) {
+function editFormula (layerId, indexLabel, editCallback) {
     for (const upgrade of ALL_UPGRADES) {
-        if (upgrade.layerId === layerId && upgrade.upgradeId === upgradeId) {
+        if (upgrade.layerId === layerId && upgrade.indexLabel === indexLabel) {
             const newFormula = editCallback(upgrade.effectFormula());
             upgrade.effectFormula = () => newFormula;
             upgrade.refreshFormula(true);
@@ -277,7 +277,7 @@ function createLayer (layer) {
 
         addUpgrade (upg) {
             let id = ++index;
-            ++indexLabel;
+            upg.indexLabel = ++indexLabel;
             if (upg.title === undefined)
                 upg.title = layer.name + " " + indexLabel;
             if (upg.currency !== undefined) {

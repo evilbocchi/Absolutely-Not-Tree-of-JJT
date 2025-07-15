@@ -1,6 +1,6 @@
 export default createLayer({
     name: "Unimpossible",
-    branches: ["thelowergap"],
+    branches: ["negativity"],
     startData() {
         return {
             unlocked: true,
@@ -116,7 +116,7 @@ export default createLayer({
         currency: "points",
         formulaEdit: {
             layer: "unimpossible",
-            upgrade: 101,
+            upgrade: 1,
             callback: (formula) => {
                 formula.operations[1].amount = formula.operations[1].amount.sub(13)
                 return formula

@@ -65,7 +65,7 @@ export default createLayer({
         currency: "points",
         formulaEdit: {
             layer: "thelowergap",
-            upgrade: 101,
+            upgrade: 1,
             callback: (formula) => {
                 formula.operations[1].amount = formula.operations[1].amount.sub(10)
                 return formula

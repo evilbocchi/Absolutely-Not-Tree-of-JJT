@@ -46,7 +46,7 @@ export default createLayer({
         currency: "points",
         formulaEdit: {
             layer: "thefirstdifficulty",
-            upgrade: 105,
+            upgrade: 5,
             callback: (formula) => {
                 formula.operations[1].amount = formula.operations[1].amount.sub(5);
                 return formula;
@@ -69,7 +69,7 @@ export default createLayer({
         currency: "points",
         formulaEdit: {
             layer: "thefirstdifficulty",
-            upgrade: 104,
+            upgrade: 4,
             callback: (formula) => {
                 formula.operations[0].amount = formula.operations[0].amount.add(0.025);
                 return formula;
