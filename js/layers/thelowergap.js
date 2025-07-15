@@ -1,9 +1,9 @@
 export default createLayer({
     name: "The Lower Gap",
-    startData() {
+    startData () {
         return {
             unlocked: true
-        }
+        };
     },
     color: "rgb(0, 30, 0)",
     style: {
@@ -19,8 +19,8 @@ export default createLayer({
         }
     },
     image: "https://static.wikia.nocookie.net/jtohs-joke-towers/images/4/47/TheLowerGapRemake.png",
-    update(diff) {
-        player.resetTime = player.resetTime.add(player.tickspeed.mul(diff).mul(getBoost("resetTime", $ONE)))
+    update (diff) {
+        player.resetTime = player.resetTime.add(player.tickspeed.mul(diff).mul(getBoost("resetTime", $ONE)));
     }
 })
     .addUpgrade({
@@ -48,8 +48,8 @@ export default createLayer({
             layer: "thefirstdifficulty",
             upgrade: 105,
             callback: (formula) => {
-                formula.operations[1].amount = formula.operations[1].amount.sub(5)
-                return formula
+                formula.operations[1].amount = formula.operations[1].amount.sub(5);
+                return formula;
             }
         },
     })
@@ -71,8 +71,8 @@ export default createLayer({
             layer: "thefirstdifficulty",
             upgrade: 104,
             callback: (formula) => {
-                formula.operations[0].amount = formula.operations[0].amount.add(0.025)
-                return formula
+                formula.operations[0].amount = formula.operations[0].amount.add(0.025);
+                return formula;
             }
         },
     })
@@ -91,4 +91,30 @@ export default createLayer({
         effectOperation: 'mul',
         effectCurrency: 'tickspeed',
     })
-    .register()
+    .addUpgrade({
+        description: "Skill boosts itself again by Skill, with a cap at 1Ce Skill.",
+        cost: 240,
+        currency: "points",
+        effectX: () => player.points,
+        effectFormula: () => new Formula().log(23).sqrt(),
+        effectFormulaX: 'Skill',
+        effectOperation: 'mul',
+        overrideDisplay: true
+    })
+    .addUpgrade({
+        description: "1.5x Tickspeed.",
+        cost: 500,
+        currency: "points",
+        effect: () => 1.5,
+        effectOperation: 'mul',
+        effectCurrency: 'tickspeed',
+    })
+    .addUpgrade({
+        description: "Expand the tree.",
+        cost: 1000,
+        currency: "points",
+        effect: () => 1,
+        effectOperation: 'mul',
+        effectCurrency: 'tickspeed'
+    })
+    .register();

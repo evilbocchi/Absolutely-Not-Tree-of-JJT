@@ -54,7 +54,7 @@ function canGenPoints(){
 
 // Calculate points/sec!
 setTimeout(() => {
-    player.devSpeed = 0.01
+    player.devSpeed = 1
 }, 500);
 const base = new OmegaNum(0.01);
 function getPointGen() {

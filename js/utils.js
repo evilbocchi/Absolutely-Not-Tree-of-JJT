@@ -35,7 +35,11 @@ function canAffordPurchase(layer, thing, cost) {
 			return !(player[lr][name].lt(cost))
 		}
 		else {
-			return !(player[name].lt(cost))
+            const amount = player[name];
+            if (amount === undefined) {
+                return false;
+            }
+			return !(amount.lt(cost))
 		}
 	}
 	else {
