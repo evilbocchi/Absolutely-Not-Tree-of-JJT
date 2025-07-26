@@ -56,8 +56,11 @@ export default createLayer({
         effectOperation: 'mul',
     })
     .addUpgrade({
-        description: "Extend the tree.",
+        description: "Extends a branch from UP17 and expands tree on Island 2.",
         cost: 30000,
-        currency: "points"
+        currency: "points",
+        req: () => hasUpgrade("negativity", 12), // Requires UP17 to be bought
+        effect: () => 1.125,
+        effectOperation: 'mul',
     })
     .register()

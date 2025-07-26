@@ -132,13 +132,97 @@ export default createLayer({
         effectCurrency: 'tickspeed',
     })
     .addUpgrade({
-        description: "Unlocks Upgrade Board I.",
+        description: "Unlocks Upgrade Board I. Expands the tree on Island 2 and opens a portal shortcut between both sides of Island 2.",
         cost: 25000000,
         currency: "points",
     })
     .addUpgrade({
-        description: "Expand the tree.",
-        cost: 300,
+        description: "Increase Cash gain by 20% compounding per Quantity, and for every 10 Quantities, the compounding amount gets increased by 1%.", 
+        cost: 20,
         currency: "Cash",
+        buyableId: 101,
+        effectX: () => getBuyableAmount("unimpossible", 101),
+        effectFormula: () => new Formula().mul(0.2).add(1),
+        effectFormulaX: 'Bought',
+        effectCurrency: 'Cash',
+        effectOperation: 'mul',
+        overrideDisplay: true
+    })
+    .addUpgrade({
+        description: "Increase Skill gain by 15% per Quantity, and for every 10 Quantities, doubles the effect.",
+        cost: 55,
+        currency: "Cash", 
+        buyableId: 102,
+        effectX: () => getBuyableAmount("unimpossible", 102),
+        effectFormula: () => new Formula().mul(0.15).add(1),
+        effectFormulaX: 'Bought',
+        effectOperation: 'mul',
+        overrideDisplay: true
+    })
+    .addUpgrade({
+        description: "Multiplies Skill gain based on Tickspeed, also opens the path to the Slamo V1 Generator.",
+        cost: 150000000,
+        currency: "points",
+        effectX: () => player.tickspeed,
+        effectFormula: () => new Formula().pow(0.2),
+        effectFormulaX: 'Tickspeed',
+        effectOperation: 'mul',
+        overrideDisplay: true
+    })
+    .addUpgrade({
+        description: "2x Skill gain.",
+        cost: 200000000,
+        currency: "points",
+        effect: () => 2,
+        effectOperation: 'mul',
+    })
+    .addUpgrade({
+        description: "Tickspeed is increased by compounding 1.01x per Class Negative main upgrade you have. (#CLN).",
+        cost: 350000000,
+        currency: "points",
+        effectX: () => {
+            let upgradeCount = 0
+            for (const diff of clnDiffs) {
+                const len = player[diff]?.upgrades.length;
+                if (len !== undefined)
+                    upgradeCount += len
+            }
+            return new OmegaNum(upgradeCount)
+        },
+        effectFormula: () => new Formula().mul(0.01).add(1),
+        effectFormulaX: '#clnUpgs',
+        effectCurrency: 'tickspeed',
+        effectOperation: 'mul',
+        overrideDisplay: true
+    })
+    .addUpgrade({
+        description: "Multiplies Skill gain based on Cash, with a cap at 1Ce Cash.",
+        cost: 525000000,
+        currency: "points",
+        effectX: () => player.cash.points,
+        effectFormula: () => new Formula().pow(1/25),
+        effectFormulaX: 'Cash',
+        effectOperation: 'mul',
+        overrideDisplay: true
+    })
+    .addUpgrade({
+        description: "Subtracts 10 from the base of The Lower Gap 1's logarithm.",
+        cost: 2500000000,
+        currency: "points",
+        formulaEdit: {
+            layer: "thelowergap",
+            upgrade: 1,
+            callback: (formula) => {
+                formula.operations[1].amount = formula.operations[1].amount.sub(10);
+                return formula;
+            }
+        },
+    })
+    .addUpgrade({
+        description: "2x Skill gain. Unlocks the Third Island.",
+        cost: 3000000000,
+        currency: "points",
+        effect: () => 2,
+        effectOperation: 'mul',
     })
     .register()

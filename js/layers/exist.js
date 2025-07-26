@@ -78,4 +78,33 @@ export default createLayer({
         color: "magenta"
     },
 })
+.addUpgrade({
+    description: "You get used to automation. Automate key features.",
+    cost: 1e20,
+    currency: "points",
+    effect: () => 1.25,
+    effectCurrency: 'tickspeed',
+    effectOperation: 'mul',
+})
+.addUpgrade({
+    description: "Unlock new mechanics and boosts.",
+    cost: 5e22,
+    currency: "points",
+    effect: () => 3,
+    effectOperation: 'mul',
+})
+.addUpgrade({
+    description: "Major progression unlock.",
+    cost: 1e25,
+    currency: "points",
+    effect: () => 5,
+    effectOperation: 'mul',
+})
+.addUpgrade({
+    description: "Approach the extension layer.",
+    cost: 1e30,
+    currency: "points",
+    effect: () => 10,
+    effectOperation: 'mul',
+})
 .register()

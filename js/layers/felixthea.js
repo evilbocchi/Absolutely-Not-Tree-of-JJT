@@ -72,4 +72,50 @@ export default createLayer({
     cost: 150e12,
     currency: "points",
 })
+.addUpgrade({
+    description: "Skill gain is now multiplied based on V1 Slamos incinerated. Also opens another Parkour Upgrade and now you can buy the Other Choice Upgrade.",
+    cost: 5e15, // 5Qn approximation
+    currency: "points",
+    effect: () => 1.5, // Placeholder since V1 Slamos not implemented
+    effectOperation: 'mul',
+})
+.addUpgrade({
+    description: "Skill gain is now also boosted based upon the V2 Slamos incinerated.",
+    cost: 2.75e16, // 27.5Qn approximation
+    currency: "points",
+    effect: () => 1.2, // Placeholder since V2 Slamos not implemented
+    effectOperation: 'mul',
+})
+.addUpgrade({
+    description: "Skill boosts itself.",
+    cost: 6.5e16, // 65Qn approximation
+    currency: "points",
+    effectX: () => player.points,
+    effectFormula: () => new Formula().pow(1/30),
+    effectFormulaX: 'Skill',
+    effectOperation: 'mul',
+    overrideDisplay: true
+})
+.addUpgrade({
+    description: "Cash boosts itself.",
+    cost: 1e18, // 1Sx approximation
+    currency: "points",
+    effectX: () => player.cash.points,
+    effectFormula: () => new Formula().pow(1/25),
+    effectFormulaX: 'Cash',
+    effectCurrency: 'Cash',
+    effectOperation: 'mul',
+    overrideDisplay: true
+})
+.addUpgrade({
+    description: "ResetTime boosts itself.",
+    cost: 3.25e18, // 3.25Sx approximation
+    currency: "points",
+    effectX: () => player.resetTime,
+    effectFormula: () => new Formula().log(15).sqrt(),
+    effectFormulaX: 'ResetTime',
+    effectCurrency: 'resetTime',
+    effectOperation: 'mul',
+    overrideDisplay: true
+})
 .register()

@@ -67,6 +67,10 @@ function getPointGen() {
 function addedPlayerData() { return {
     tickspeed: $ONE,
     resetTime: $ZERO,
+    ccpc: $ONE, // Cube Clicks per Click
+    multiplier: $ZERO,
+    unfailability: $ZERO,
+    rebirth: $ZERO,
 }}
 
 // Display extra things at the top of the page

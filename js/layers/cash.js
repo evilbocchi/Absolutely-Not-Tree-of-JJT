@@ -35,8 +35,14 @@ export default createLayer({
     }
 })
 .addUpgrade({
-    description: "Begins Cash generation.",
+    description: "Begins Cash generation. 1.125x Skill gain.",
     cost: 100000,
-    currency: "points"
+    currency: "points",
+    effects: [
+        {
+            effect: () => 1.125,
+            effectOperation: 'mul'
+        }
+    ]
 })
 .register()
