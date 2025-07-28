@@ -159,21 +159,19 @@ function getBoost(currency, base, affectedByTickSpeed) {
     }
 
     // Apply Slamo milestone effects
-    if (typeof hasMilestone !== 'undefined') {
-        // Milestone 1: 25 Slamos incinerated - 1.5x skill
-        if (currency === undefined && hasMilestone("slamo", 1)) {
-            base = base.mul(1.5)
-        }
-        
-        // Milestone 2: 75 Slamos incinerated - 1.5x cash
-        if (currency === "cash" && hasMilestone("slamo", 2)) {
-            base = base.mul(1.5)
-        }
-        
-        // Milestone 3: 200 Slamos incinerated - 1.5x tickspeed
-        if (currency === "tickspeed" && hasMilestone("slamo", 3)) {
-            base = base.mul(1.5)
-        }
+    // Milestone 1: 25 Slamos incinerated - 1.5x skill
+    if (currency === undefined && hasMilestone("slamo", 1)) {
+        base = base.mul(1.5)
+    }
+    
+    // Milestone 2: 75 Slamos incinerated - 1.5x cash
+    if (currency === "cash" && hasMilestone("slamo", 2)) {
+        base = base.mul(1.5)
+    }
+    
+    // Milestone 3: 200 Slamos incinerated - 1.5x tickspeed
+    if (currency === "tickspeed" && hasMilestone("slamo", 3)) {
+        base = base.mul(1.5)
     }
 
     if (currency !== "tickspeed" && affectedByTickSpeed !== false)

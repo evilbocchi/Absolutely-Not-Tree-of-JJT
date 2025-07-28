@@ -15,10 +15,7 @@ export default createLayer({
     branches: ["friendliness"],
     type: "none",
     requires: new OmegaNum(0), // No requirements since it's unlocked via friendliness upgrade
-    
-    unlocked() {
-        return hasUpgrade("friendliness", 101)
-    },
+
     
     style: {
         color: "white",
@@ -77,7 +74,7 @@ export default createLayer({
                 }
             },
             canClick() {
-                return !player.slamo.incinerating
+                return !player.slamo?.incinerating
             },
             onClick() {
                 if (!player.slamo.incinerating) {
@@ -110,28 +107,28 @@ export default createLayer({
             requirementDescription: "25 V1 Slamos incinerated",
             effectDescription: "1.5x Skill gain",
             done() {
-                return player.slamo.incinerated.gte(25)
+                return player.slamo?.incinerated.gte(25)
             }
         },
         2: {
             requirementDescription: "75 V1 Slamos incinerated", 
             effectDescription: "1.5x Cash gain and automate Incinerator V1",
             done() {
-                return player.slamo.incinerated.gte(75)
+                return player.slamo?.incinerated.gte(75)
             }
         },
         3: {
             requirementDescription: "200 V1 Slamos incinerated",
             effectDescription: "1.5x Tickspeed",
             done() {
-                return player.slamo.incinerated.gte(200)
+                return player.slamo?.incinerated.gte(200)
             }
         }
     },
     
     update(diff) {
         // Auto-incinerator from milestone 2
-        if (hasMilestone("slamo", 2) && !player.slamo.incinerating) {
+        if (hasMilestone("slamo", 2) && !player.slamo?.incinerating) {
             // Auto-click every 3.5 seconds when automated
             if (Date.now() - (player.slamo.lastAutoClick || 0) > 3500) {
                 player.slamo.lastAutoClick = Date.now()
@@ -140,7 +137,7 @@ export default createLayer({
         }
         
         // Update incinerating status
-        if (player.slamo.incinerating) {
+        if (player.slamo?.incinerating) {
             const elapsed = Date.now() - player.slamo.lastIncinerationTime
             if (elapsed >= player.slamo.animationTime) {
                 player.slamo.incinerating = false
@@ -148,9 +145,7 @@ export default createLayer({
                 player.slamo.incinerated = player.slamo.incinerated.add(1)
             }
         }
-        
-        // Apply effects to header display
-        addCurrencyToHeader("V1 Slamos", () => player.slamo.points, $ONE, "#8B4513")
+
     }
 })
 .register()
