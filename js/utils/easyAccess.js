@@ -5,7 +5,10 @@ function hasUpgrade(layer, id) {
 }
 
 function hasMilestone(layer, id) {
-	return ((player[layer].milestones.includes(toNumber(id)) || player[layer].milestones.includes(id.toString())) && !tmp[layer].deactivated)
+	const playerLayer = player[layer];
+	if (playerLayer === undefined)
+		return false;
+	return ((playerLayer.milestones.includes(toNumber(id)) || playerLayer.milestones.includes(id.toString())) && !tmp[layer].deactivated)
 }
 
 function hasAchievement(layer, id) {

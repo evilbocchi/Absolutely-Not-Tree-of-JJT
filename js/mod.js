@@ -26,7 +26,7 @@ let changelog = `<h1>Changelog:</h1><br>
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
 const difficulties = {
-    [-2]: ["thefirstdifficulty", "thelowergap", "negativity", "cash", "unimpossible", "friendliness", "trueease", "a", "felixthea", "exist"],
+    [-2]: ["thefirstdifficulty", "thelowergap", "negativity", "cash", "unimpossible", "friendliness", "trueease", "a", "felixthea", "exist", "slamo"],
     [-1]: []
 }
 const clnDiffs = [...difficulties[-2], ...difficulties[-1]]
@@ -156,6 +156,22 @@ function getBoost(currency, base, affectedByTickSpeed) {
         if ((upgrade.pseudo === true || hasUpgrade(upgrade.layerId, upgrade.upgradeId)) && !$ZERO.eq(calculated)) {
             base = base[upgrade.effectOperation](calculated)
         }
+    }
+
+    // Apply Slamo milestone effects
+    // Milestone 1: 25 Slamos incinerated - 1.5x skill
+    if (currency === undefined && hasMilestone("slamo", 1)) {
+        base = base.mul(1.5)
+    }
+    
+    // Milestone 2: 75 Slamos incinerated - 1.5x cash
+    if (currency === "cash" && hasMilestone("slamo", 2)) {
+        base = base.mul(1.5)
+    }
+    
+    // Milestone 3: 200 Slamos incinerated - 1.5x tickspeed
+    if (currency === "tickspeed" && hasMilestone("slamo", 3)) {
+        base = base.mul(1.5)
     }
 
     if (currency !== "tickspeed" && affectedByTickSpeed !== false)

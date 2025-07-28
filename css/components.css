@@ -166,3 +166,29 @@
 	border-color: rgba(0, 0, 0, 0.125);
 }
 
+/* Slamo Incinerator Animations */
+@keyframes slideAndBurn {
+    0% {
+        transform: translateX(-100px);
+        opacity: 1;
+    }
+    50% {
+        transform: translateX(0px);
+        opacity: 1;
+    }
+    75% {
+        transform: translateX(50px);
+        opacity: 0.8;
+        filter: brightness(1.5);
+    }
+    100% {
+        transform: translateX(100px);
+        opacity: 0;
+        filter: brightness(2) hue-rotate(30deg);
+    }
+}
+
+.slamo-animation {
+    animation: slideAndBurn 3s ease-in-out;
+}
+

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slamo Incinerator V1 Demo</title>
+    <style>
+        body {
+            background-color: #222;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .incinerator {
+            background: #654321;
+            border: 3px solid #8B4513;
+            padding: 20px;
+            border-radius: 15px;
+            width: 300px;
+            margin: 20px auto;
+            cursor: pointer;
+        }
+        
+        .incinerator.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .conveyor {
+            background: #333;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+            height: 60px;
+        }
+        
+        .slamo {
+            background: #888;
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .slamo.animating {
+            animation: slideAndBurn 3s ease-in-out;
+        }
+        
+        @keyframes slideAndBurn {
+            0% {
+                transform: translate(-150px, -50%);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(-50%, -50%);
+                opacity: 1;
+            }
+            75% {
+                transform: translate(50px, -50%);
+                opacity: 0.8;
+                filter: brightness(1.5);
+            }
+            100% {
+                transform: translate(150px, -50%);
+                opacity: 0;
+                filter: brightness(2) hue-rotate(30deg);
+            }
+        }
+        
+        .stats {
+            background: #444;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 400px;
+        }
+        
+        .milestone {
+            background: #bf8f8f;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            border: 2px solid #666;
+        }
+        
+        .milestone.completed {
+            background: #77bf5f;
+        }
+        
+        .countdown {
+            color: orange;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔥 Slamo Incinerator V1 Demo 🔥</h1>
+    
+    <div class="stats">
+        <h3>Statistics</h3>
+        <p>V1 Slamos Earned: <span id="slamos">0</span></p>
+        <p>Total Incinerated: <span id="incinerated">0</span></p>
+        <p>Skill Multiplier: <span id="skillMult">1x</span></p>
+        <p>Cash Multiplier: <span id="cashMult">1x</span></p>
+        <p>Tickspeed Multiplier: <span id="tickMult">1x</span></p>
+        <p>Auto Mode: <span id="autoMode">Disabled</span></p>
+    </div>
+    
+    <div class="incinerator" id="incinerator" onclick="startIncineration()">
+        <h3>🔥 INCINERATOR V1 🔥</h3>
+        <div class="conveyor">
+            <div class="slamo" id="slamo">😊</div>
+            <div style="margin-top: 20px;">▶▶▶ Conveyor Belt ▶▶▶</div>
+        </div>
+        <div id="status" style="color: lime;">Click to incinerate a Slamo!</div>
+        <div id="countdown" class="countdown"></div>
+    </div>
+    
+    <div class="stats">
+        <h3>Milestones</h3>
+        <div class="milestone" id="milestone1">25 Slamos: 1.5x Skill gain</div>
+        <div class="milestone" id="milestone2">75 Slamos: 1.5x Cash gain + Automation</div>
+        <div class="milestone" id="milestone3">200 Slamos: 1.5x Tickspeed</div>
+    </div>
+    
+    <script>
+        let slamos = 0;
+        let incinerated = 0;
+        let incinerating = false;
+        let autoMode = false;
+        let autoInterval;
+        
+        function updateDisplay() {
+            document.getElementById('slamos').textContent = slamos;
+            document.getElementById('incinerated').textContent = incinerated;
+            
+            // Update multipliers
+            let skillMult = incinerated >= 25 ? 1.5 : 1;
+            let cashMult = incinerated >= 75 ? 1.5 : 1;
+            let tickMult = incinerated >= 200 ? 1.5 : 1;
+            
+            document.getElementById('skillMult').textContent = skillMult + 'x';
+            document.getElementById('cashMult').textContent = cashMult + 'x';
+            document.getElementById('tickMult').textContent = tickMult + 'x';
+            
+            // Update milestones
+            if (incinerated >= 25) {
+                document.getElementById('milestone1').classList.add('completed');
+            }
+            if (incinerated >= 75) {
+                document.getElementById('milestone2').classList.add('completed');
+                if (!autoMode) {
+                    autoMode = true;
+                    document.getElementById('autoMode').textContent = 'Enabled';
+                    startAutoMode();
+                }
+            }
+            if (incinerated >= 200) {
+                document.getElementById('milestone3').classList.add('completed');
+            }
+        }
+        
+        function startIncineration() {
+            if (incinerating) return;
+            
+            incinerating = true;
+            document.getElementById('incinerator').classList.add('disabled');
+            document.getElementById('slamo').classList.add('animating');
+            document.getElementById('status').innerHTML = '<span style="color: orange;">INCINERATING...</span>';
+            
+            let timeLeft = 3;
+            const countdownEl = document.getElementById('countdown');
+            
+            const countdownInterval = setInterval(() => {
+                countdownEl.textContent = `${timeLeft} seconds remaining`;
+                timeLeft--;
+                
+                if (timeLeft < 0) {
+                    clearInterval(countdownInterval);
+                    countdownEl.textContent = '';
+                }
+            }, 1000);
+            
+            setTimeout(() => {
+                incinerating = false;
+                slamos++;
+                incinerated++;
+                
+                document.getElementById('incinerator').classList.remove('disabled');
+                document.getElementById('slamo').classList.remove('animating');
+                document.getElementById('status').innerHTML = '<span style="color: lime;">Click to incinerate a Slamo!</span>';
+                
+                updateDisplay();
+            }, 3000);
+        }
+        
+        function startAutoMode() {
+            autoInterval = setInterval(() => {
+                if (!incinerating && autoMode) {
+                    startIncineration();
+                }
+            }, 3500); // Slightly longer than animation to avoid overlap
+        }
+        
+        // Initialize display
+        updateDisplay();
+    </script>
+</body>
+</html>
