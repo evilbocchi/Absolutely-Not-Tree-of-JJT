@@ -147,15 +147,24 @@ class Formula {
     }
 }
 
-function editFormula (layerId, indexLabel, editCallback) {
+function getUpgradeFromIndexLabel (layerId, indexLabel) {
     for (const upgrade of ALL_UPGRADES) {
         if (upgrade.layerId === layerId && upgrade.indexLabel === indexLabel) {
-            const newFormula = editCallback(upgrade.effectFormula());
-            upgrade.effectFormula = () => newFormula;
-            upgrade.refreshFormula(true);
-            break;
+            return upgrade;
         }
     }
+    return undefined;
+}
+
+function editFormula (layerId, indexLabel, editCallback) {
+    const upgrade = getUpgradeFromIndexLabel(layerId, indexLabel);
+    if (upgrade === undefined || upgrade.effectFormula === undefined) {
+        console.warn("No upgrade found with layerId " + layerId + " and indexLabel " + indexLabel);
+        return;
+    }
+    const newFormula = editCallback(upgrade.effectFormula());
+    upgrade.effectFormula = () => newFormula;
+    upgrade.refreshFormula(true);
 }
 
 const layersPerCurrency = new Map();
