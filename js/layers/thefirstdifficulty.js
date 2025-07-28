@@ -22,6 +22,9 @@ export default createLayer({
         description: "Begins Skill gain.",
         cost: 0,
         currency: "points",
+        effect: () => 1,
+        effectOperation: 'mul',
+        currency: "points",
     })
     .addUpgrade({
         description: "1.5x Skill gain.",

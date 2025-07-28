@@ -1,21 +1,21 @@
 let modInfo = {
-	name: "tree of jjt",
-	id: "tojjt",
-	author: "evilbocchi",
-	pointsName: "Skill",
+    name: "tree of jjt",
+    id: "tojjt",
+    author: "evilbocchi",
+    pointsName: "Skill",
     modFiles: [],
-    
-	discordName: "",
-	discordLink: "",
-	initialStartPoints: new OmegaNum(0), // Used for hard resets and new players
-	
-	offlineLimit: 6,  // In hours
+
+    discordName: "",
+    discordLink: "",
+    initialStartPoints: new OmegaNum(0), // Used for hard resets and new players
+
+    offlineLimit: 6,  // In hours
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0",
-	name: "",
+    num: "0.0",
+    name: "",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -37,19 +37,19 @@ for (const [_, diffList] of Object.entries(difficulties))
         sortedDiffs.push(difficulty)
         modInfo.modFiles.push("layers/" + difficulty + ".js")
     }
-        
+
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
 var doNotCallTheseFunctionsEveryTick = ["blowUpEverything"]
 
-function getStartPoints(){
+function getStartPoints() {
     return new OmegaNum(modInfo.initialStartPoints)
 }
 
 // Determines if it should show points/sec
-function canGenPoints(){
-	return hasUpgrade('thefirstdifficulty', 101)
+function canGenPoints() {
+    return getUpgradeFromIndexLabel('thefirstdifficulty', 1).unlocked;
 }
 
 // Calculate points/sec!
@@ -58,16 +58,18 @@ setTimeout(() => {
 }, 500);
 const base = new OmegaNum(0.01);
 function getPointGen() {
-	if(!canGenPoints())
-		return $ZERO
-	return getBoost(undefined, base)
+    if (!canGenPoints())
+        return $ZERO
+    return getBoost(undefined, base)
 }
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
-function addedPlayerData() { return {
-    tickspeed: $ONE,
-    resetTime: $ZERO,
-}}
+function addedPlayerData() {
+    return {
+        tickspeed: $ONE,
+        resetTime: $ZERO,
+    }
+}
 
 // Display extra things at the top of the page
 var displayThings = [
@@ -75,7 +77,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return false
+    return false
 }
 
 
@@ -88,12 +90,12 @@ var backgroundStyle = {
 
 // You can change this if you have things that can be messed up by long tick lengths
 function maxTickLength() {
-	return(3600) // Default is 1 hour which is just arbitrarily large
+    return (3600) // Default is 1 hour which is just arbitrarily large
 }
 
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
 // you can cap their current resources with this.
-function fixOldSave(oldVersion){
+function fixOldSave(oldVersion) {
 }
 
 const ALL_UPGRADES = new Array()
@@ -102,18 +104,18 @@ const UPPGRADES_PER_CURRENCY = new Map()
 async function loadLayers() {
     for (const file of modInfo.modFiles) {
         try {
-           await import("./" + file)
+            await import("./" + file)
         } catch (error) {
             console.log(error)
         }
     }
-    
+
     for (const sortedUpgrades of upgradesSortedPerLayer) {
         if (sortedUpgrades === undefined)
             continue
         for (const upgrade of sortedUpgrades) {
             if (upgrade.effectCurrency === undefined) {
-               POINT_UPGRADES.push(upgrade) 
+                POINT_UPGRADES.push(upgrade)
             }
             else {
                 const lower = upgrade.effectCurrency.toLowerCase()
@@ -124,7 +126,7 @@ async function loadLayers() {
                     current.push(upgrade)
                 UPPGRADES_PER_CURRENCY.set(lower, current)
             }
-                
+
             ALL_UPGRADES.push(upgrade)
         }
     }
@@ -158,7 +160,7 @@ function getBoost(currency, base, affectedByTickSpeed) {
 
     if (currency !== "tickspeed" && affectedByTickSpeed !== false)
         base = base.mul(player.tickspeed)
-	return base
+    return base
 }
 
 loadLayers()
